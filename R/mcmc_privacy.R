@@ -1,3 +1,16 @@
+
+#' Sample from posterior
+#'
+#' @param data_model A data model created using the privacy class.
+#' @param sdp The observed privatized data.
+#' @param nobs The number of observations.
+#' @param init_par Initial starting point of the chain.
+#' @param niter Number of draws.
+#'
+#' @return A matrix of posterior samples.
+#' @export
+#'
+#' @examples ...
 mcmc_privacy <- function(data_model,
                          sdp,
                          nobs,
