@@ -36,16 +36,23 @@ mcmc_privacy_add <- function(post_smpl,
 }
 
 
-mcmc_privacy <- function(pobj,
+mcmc_privacy <- function(data_model,
                          sdp,
                          nobs,
                          init_par,
                          niter) {
+  post_smpl <- data_model$post_smpl
+  lik_smpl <- data_model$lik_smpl
+  ll_priv_mech <- data_model$ll_priv_mech
+  st_update <- data_model$st_update
+  st_init <- data_model$st_init
+  npar <- data_model$npar
+
   d_mat <- lapply(1:nobs, function(s) lik_smpl(init_par))
   d_mat <- do.call(rbind, d_mat)
   theta_mat <- matrix(0, nrow = niter, ncol = npar)
   theta <- init_par
-  pb <- txtProgressBar(1, niter * n, style=3)
+  pb <- utils::txtProgressBar(1, niter * nobs, style=3)
   st <- st_init(d_mat)
   counter <- 0
   for(i in 1:niter) {
@@ -61,10 +68,10 @@ mcmc_privacy <- function(pobj,
         d_mat[j,] <- xs
         st <- sn
       }
-      setTxtProgressBar(pb, i*n + j)
+      utils::setTxtProgressBar(pb, i*nobs + j)
     }
   }
-  print(paste(cat("\n","Accept Prob: "), counter/(nobs*niter)))
+  #print(paste(cat("\n","Accept Prob: "), counter/(nobs*niter)))
   theta_mat
 }
 
