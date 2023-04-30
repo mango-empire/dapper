@@ -19,8 +19,8 @@ mcmc_privacy <- function(data_model,
   post_smpl <- data_model$post_smpl
   lik_smpl <- data_model$lik_smpl
   ll_priv_mech <- data_model$ll_priv_mech
+  st_init <- data_model$st_calc
   st_update <- data_model$st_update
-  st_init <- data_model$st_init
   npar <- data_model$npar
 
   d_mat <- lapply(1:nobs, function(s) lik_smpl(init_par))
@@ -36,7 +36,14 @@ mcmc_privacy <- function(data_model,
     for(j in 1:nobs) {
       xs <- lik_smpl(theta)
       xo <- d_mat[j,]
-      sn <- st_update(st, xs, xo)
+      sn <- NULL
+      if(is.null(st_update)) {
+        n_mat <- d_mat
+        n_mat[j,] <- xs
+        sn <- st_init(n_mat)
+      } else {
+        sn <- st_update(st, xs, xo)
+      }
       a <- exp(ll_priv_mech(sdp, sn) - ll_priv_mech(sdp, st))
       if(stats::runif(1) < min(a,1)) {
         counter <- counter + 1
@@ -46,11 +53,7 @@ mcmc_privacy <- function(data_model,
       utils::setTxtProgressBar(pb, i*nobs + j)
     }
   }
-  #print(paste(cat("\n","Accept Prob: "), counter/(nobs*niter)))
   theta_mat
 }
 
-two_DP <- function() {
-  TRUE
-}
 
