@@ -8,6 +8,12 @@
 #' @export
 #'
 #' @examples
+#' set.seed(1)
+#' epsilon <- .02
+#' tval <- stats::rmultinom(1, 300, c(.20,.15,.35,.30))
+#' sdp <- sapply(tval, function(s) extraDistr::rlaplace(1,mu = s, sigma = 1/epsilon))
+#' sout <- two_way(sdp, sum(tval), epsilon, 5000)
+#' plot(sout)
 two_way <- function(cell_values, n_total, epsilon, niter = 100) {
   dmod <- new_privacy(post_smpl = post_smpl_two_way,
                       lik_smpl = lik_smpl_two_way,
@@ -37,12 +43,12 @@ post_smpl_two_way <- function(dmat, theta) {
   k1 <- x[1] + x[3]
   a1 <- k1 + alpha[1]
   b1 <- n - k1 + alpha[2]
-  p1 <- rbeta(1, a1, b1)
+  p1 <- stats::rbeta(1, a1, b1)
 
   k2 <- x[1] + x[2]
   a2 <- k2 + alpha[3]
   b2 <- n - k2 + alpha[4]
-  p2 <- rbeta(1, a2, b2)
+  p2 <- stats::rbeta(1, a2, b2)
 
   c(p1, p2, n)
 }
@@ -53,7 +59,7 @@ lik_smpl_two_way <- function(theta) {
   p21 <- theta[1] * (1 - theta[2])
   p22 <- (1-theta[1]) * (1 - theta[2])
   n <- theta[3]
-  c(rmultinom(1, n, c(p11, p12, p21, p22)))
+  c(stats::rmultinom(1, n, c(p11, p12, p21, p22)))
 }
 
 gen_priv_two_way <- function(epsilon) {

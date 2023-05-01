@@ -69,7 +69,7 @@ plot.dpsim <- function(object) {
   z <- object$theta
   npar <- ncol(z)
   gsize <- ceiling(sqrt(npar))
-  par(mfrow=c(gsize,gsize))
+  graphics::par(mfrow=c(gsize,gsize))
   xi <- 1:nrow(z)
   for(i in 1:npar) {
     plot(xi,z[,i])

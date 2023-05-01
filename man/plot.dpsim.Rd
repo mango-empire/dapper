@@ -2,7 +2,7 @@
 % Please edit documentation in R/mcmc_privacy.R
 \name{plot.dpsim}
 \alias{plot.dpsim}
-\title{Title}
+\title{Plot simulation object}
 \usage{
 \method{plot}{dpsim}(object)
 }
@@ -10,5 +10,5 @@
 \item{object}{}
 }
 \description{
-Title
+Plot simulation object
 }

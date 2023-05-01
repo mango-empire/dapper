@@ -15,3 +15,11 @@ p1,p2
 \description{
 DP aware inference for two way table.
 }
+\examples{
+set.seed(1)
+epsilon <- .02
+tval <- stats::rmultinom(1, 300, c(.20,.15,.35,.30))
+sdp <- sapply(tval, function(s) extraDistr::rlaplace(1,mu = s, sigma = 1/epsilon))
+sout <- two_way(sdp, sum(tval), epsilon, 5000)
+plot(sout)
+}
