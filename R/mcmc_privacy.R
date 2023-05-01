@@ -10,7 +10,7 @@
 #' @return A matrix of posterior samples.
 #' @export
 #'
-#' @examples ...
+#' @examples
 mcmc_privacy <- function(data_model,
                          sdp,
                          nobs,
@@ -53,7 +53,25 @@ mcmc_privacy <- function(data_model,
       utils::setTxtProgressBar(pb, i*nobs + j)
     }
   }
-  theta_mat
+  new_dpsim(theta_mat)
 }
 
 
+#' Plot simulation object
+#'
+#' @param object
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot.dpsim <- function(object) {
+  z <- object$theta
+  npar <- ncol(z)
+  gsize <- ceiling(sqrt(npar))
+  par(mfrow=c(gsize,gsize))
+  xi <- 1:nrow(z)
+  for(i in 1:npar) {
+    plot(xi,z[,i])
+  }
+}

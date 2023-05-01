@@ -23,6 +23,3 @@ A matrix of posterior samples.
 \description{
 Sample from posterior
 }
-\examples{
-...
-}

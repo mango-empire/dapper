@@ -58,7 +58,7 @@ test_that("test on simple means model", {
                         init_par = -2,
                         niter = 40)
 
-    expect_equal(mean(tmp), -2, tolerance = .1)
+    expect_equal(mean(tmp$theta), -2, tolerance = .1)
 })
 
 test_that("correctly defaults to st_calc with null update", {
@@ -119,5 +119,5 @@ test_that("correctly defaults to st_calc with null update", {
                         init_par = -2,
                         niter = 40)
 
-    expect_equal(mean(tmp), -2, tolerance = .1)
+    expect_equal(mean(tmp$theta), -2, tolerance = .1)
 })

@@ -7,7 +7,7 @@
 #' @return p1,p2
 #' @export
 #'
-#' @examples tbd
+#' @examples
 two_way <- function(cell_values, n_total, epsilon, niter = 100) {
   dmod <- new_privacy(post_smpl = post_smpl_two_way,
                       lik_smpl = lik_smpl_two_way,
@@ -66,5 +66,6 @@ gen_priv_two_way <- function(epsilon) {
 st_calc_two_way <- function(dmat) {
   c(dmat)
 }
+
 
 

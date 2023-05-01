@@ -10,7 +10,7 @@
 #' @return A data model of class privacy. Is a S3 object.
 #' @export
 #'
-#' @examples ...
+#' @examples
 new_privacy <- function(post_smpl,
                         lik_smpl,
                         ll_priv_mech,
