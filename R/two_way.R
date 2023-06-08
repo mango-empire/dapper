@@ -9,15 +9,15 @@
 #'
 #' @examples
 #' set.seed(1)
-#' epsilon <- .02
+#' rho <- 3.325 * 3.01 * 10^(-2)
 #' tval <- stats::rmultinom(1, 300, c(.20,.15,.35,.30))
-#' sdp <- sapply(tval, function(s) extraDistr::rlaplace(1,mu = s, sigma = 1/epsilon))
-#' sout <- two_way(sdp, sum(tval), epsilon, 5000)
+#' sdp <- sapply(tval, function(s) rdpnorm(1, 0, sqrt(1/rho))) + tval
+#' sout <- two_way(sdp, sum(tval), rho, 8000)
 #' plot(sout)
-two_way <- function(cell_values, n_total, epsilon, niter = 100) {
+two_way <- function(cell_values, n_total, rho, niter = 100) {
   dmod <- new_privacy(post_smpl = post_smpl_two_way,
                       lik_smpl = lik_smpl_two_way,
-                      ll_priv_mech = gen_priv_two_way(epsilon),
+                      ll_priv_mech = gen_priv_two_way(sqrt(1/rho)),
                       st_update = NULL,
                       st_calc = st_calc_two_way,
                       npar = 3)
@@ -62,11 +62,9 @@ lik_smpl_two_way <- function(theta) {
   c(stats::rmultinom(1, n, c(p11, p12, p21, p22)))
 }
 
-gen_priv_two_way <- function(epsilon) {
+gen_priv_two_way <- function(sd) {
   function(sdp, zt) {
-    b <- 1/epsilon
-    k <- abs(sdp - zt)
-    -k/b + log(exp(-1/b) - 1) - log(exp(-1/b) + 1)
+    sum(-(sdp - zt)^2/(2 * sd^2))
   }
 }
 
