@@ -64,8 +64,9 @@ lik_smpl_two_way <- function(theta) {
 
 gen_priv_two_way <- function(epsilon) {
   function(sdp, zt) {
-    ep <- 1/epsilon
-    sum(-abs(sdp - zt)/ep)
+    b <- 1/epsilon
+    k <- abs(sdp - zt)
+    -k/b + log(exp(-1/b) - 1) - log(exp(-1/b) + 1)
   }
 }
 
