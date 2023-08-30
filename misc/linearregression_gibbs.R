@@ -1,8 +1,9 @@
+
 rm(list = ls());
 N <-  100;
 p <- 2;
 iexp <- 1;
-noiselevel <- 1; 
+noiselevel <- 1;
 niter <- 10000; ## number of mcmc iterations
 
 
@@ -11,10 +12,10 @@ invisible(eval(parse(text=commandArgs(TRUE))));
 set.seed(iexp); ## random seed
 
 ## load data generating parameters-------
-load( paste("linearregression_datageneratingparam_N", N, "p", p, ".RData", sep = ""));
+load( paste("misc/linearregression_datageneratingparam_N", N, "p", p, ".RData", sep = ""));
 A <- chol(Sigma_star);
 ## load sdp----------
-load(paste("linearregression_sdpfixxy_N",N,"p",p,"noiselevel",noiselevel,"iexp", iexp, ".RData", sep = ""));
+load(paste("misc/linearregression_sdpfixxy_N",N,"p",p,"noiselevel",noiselevel,"iexp", iexp, ".RData", sep = ""));
 
 clamp_data <- function(dmat) {
   pmin(pmax(dmat,-10),10) / 10
@@ -25,11 +26,11 @@ tstat <- function(dmat) {
   sdp_mat <- clamp_data(dmat)
   ydp <- sdp_mat[,1, drop = FALSE]
   xdp <- cbind(1,sdp_mat[,-1, drop = FALSE])
-  
+
   s1 <- t(xdp) %*% ydp
   s2 <- t(ydp) %*% ydp
   s3 <- t(xdp) %*% xdp
-  
+
   ur_s1 <- c(s1)
   ur_s2 <- c(s2)
   ur_s3 <- s3[upper.tri(s3,diag = TRUE)][-1]
@@ -48,14 +49,15 @@ sdp_convert <- function(z) {
 
 set.seed(2)
 n <- 100
-epsilon <- .1
-eps <- .1
+epsilon <- 0.1
+eps <- 0.1
 xmat <- MASS::mvrnorm(n, mu = c(.9,-1.17), Sigma = diag(2))
 beta <- c(-1.79, -2.89, -0.66)
 y <- cbind(1,xmat) %*% beta + rnorm(n, sd = sqrt(2))
 z <- tstat(cbind(y,xmat))
 z <- z + VGAM::rlaplace(length(z), location = 0, scale = deltaa/epsilon)
-sdp_convert(z)
+sdp <- sdp_convert(z)
+
 
 
 
@@ -103,9 +105,9 @@ get_diffT <- function(state, clbounds, sdp){
 ## using Laplace densities
 ## operations on log-scale for stability
 get_logeta <- function(state, sdp){
-  return(sum(VGAM::dlaplace(state$T1 , 0, deltaa/ eps, TRUE)) + 
-    sum(VGAM::dlaplace(state$T2, 0, deltaa/eps, TRUE)) + 
-      sum(VGAM::dlaplace(state$T3[lower.tri(state$T3)], 0, deltaa/eps, TRUE)) + 
+  return(sum(VGAM::dlaplace(state$T1 , 0, deltaa/ eps, TRUE)) +
+    sum(VGAM::dlaplace(state$T2, 0, deltaa/eps, TRUE)) +
+      sum(VGAM::dlaplace(state$T3[lower.tri(state$T3)], 0, deltaa/eps, TRUE)) +
       sum(VGAM::dlaplace(diag(state$T3), 0, deltaa / eps, TRUE)));
 }
 
@@ -120,8 +122,8 @@ get_diffeacht <- function(x, x_, y, y_, clbounds){
   xcl_ <- normalize(x_, clbounds[1], clbounds[3]);
   xcl_[1] <- 1;
   ycl_ <- normalize(y_, clbounds[2], clbounds[4]);
-  return(diffti = list(diffti1 = xcl_ %o% ycl_ - xcl %o% ycl, 
-                       diffti2 = ycl_**2 - ycl**2, 
+  return(diffti = list(diffti1 = xcl_ %o% ycl_ - xcl %o% ycl,
+                       diffti2 = ycl_**2 - ycl**2,
                        diffti3 = xcl_ %o% xcl_ - xcl %o% xcl));
 }
 
@@ -139,15 +141,15 @@ update_XiYi_gibbs <- function(i, state, eps){
   diffti1_ <- diffti$diffti1; ## xty
   diffti2_ <- diffti$diffti2; ##yty
   diffti3_ <- diffti$diffti3; ## xtx
-  logeta_ <- sum(VGAM::dlaplace(state$T1 + diffti1_ , 0, deltaa/ eps, TRUE)) + 
-    sum(VGAM::dlaplace(state$T2 + diffti2_, 0, deltaa/eps, TRUE)) + 
-    sum(VGAM::dlaplace((state$T3 + diffti3_)[lower.tri(diffti3_)], 0, deltaa/eps, TRUE)) + 
+  logeta_ <- sum(VGAM::dlaplace(state$T1 + diffti1_ , 0, deltaa/ eps, TRUE)) +
+    sum(VGAM::dlaplace(state$T2 + diffti2_, 0, deltaa/eps, TRUE)) +
+    sum(VGAM::dlaplace((state$T3 + diffti3_)[lower.tri(diffti3_)], 0, deltaa/eps, TRUE)) +
     sum(VGAM::dlaplace(diag(state$T3 + diffti3_), 0, deltaa / eps, TRUE));
-  ## accept and reject step 
+  ## accept and reject step
   logu <- log(runif(1));
   if(logu < logeta_ - state$logeta){
     acc <- 1;
-    ## accept and change all associated values of x and y 
+    ## accept and change all associated values of x and y
     state$X[i,] <- xi;
     state$Y[i] <- yi;
     state$T1 <- state$T1 + diffti1_;
@@ -189,7 +191,7 @@ onestep_gibbs <- function(state){
 diagn <- diag(N);
 
 
-## initiate the chain 
+## initiate the chain
 state <- rinit_gibbs();
 state <- get_diffT(state, clbounds, sdp);
 state$logeta <- get_logeta(state, sdp);
