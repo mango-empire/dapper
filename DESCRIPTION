@@ -19,5 +19,6 @@ Imports:
     DiscreteLaplace,
     extraDistr,
     graphics,
+    posterior,
     stats,
     utils

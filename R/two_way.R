@@ -14,7 +14,7 @@
 #' sdp <- sapply(tval, function(s) rdpnorm(1, 0, sqrt(1/rho))) + tval
 #' sout <- two_way(sdp, sum(tval), rho, 8000)
 #' plot(sout)
-two_way <- function(cell_values, n_total, rho, niter = 100) {
+two_way <- function(cell_values, n_total, rho, niter = 100, chains =  1) {
   dmod <- new_privacy(post_smpl = post_smpl_two_way,
                       lik_smpl = lik_smpl_two_way,
                       ll_priv_mech = gen_priv_two_way(sqrt(1/rho)),
@@ -26,7 +26,8 @@ two_way <- function(cell_values, n_total, rho, niter = 100) {
                sdp = cell_values,
                nobs = 1,
                init_par = c(.5, .5, n_total),
-               niter = niter)
+               niter = niter,
+               chains = chains)
   sim_out
 }
 
