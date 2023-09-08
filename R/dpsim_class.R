@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-new_dpsim <- function(theta, varnames = NULL) {
+new_dpsim <- function(theta, accept_mat, varnames = NULL) {
   dp_obj <- do.call(rbind, theta)
   nr <- length(theta) * nrow(theta[[1]])
   nc <- ncol(theta[[1]])
@@ -17,7 +17,9 @@ new_dpsim <- function(theta, varnames = NULL) {
   attr(dp_obj, 'dimnames') <- dl
   attr(dp_obj, 'nchains') <- length(theta)
   #structure(dp_obj, class = c("dpsim", "matrix"))
-  posterior::as_draws_matrix(dp_obj)
+  e1 <- posterior::as_draws_matrix(dp_obj)
+  e2 <- accept_mat
+  structure(list(chain = e1, accept_prob = accept_mat), class = c("dpsim"))
 }
 
 

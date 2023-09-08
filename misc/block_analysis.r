@@ -68,11 +68,11 @@ tmp <- mcmc_privacy(dmod,
                     sdp = B + dp_noise,
                     nobs = 1,
                     init_par = c(sum(B), .5, .5, .5),
-                    niter = 100000,
+                    niter = 10000,
                     chains = 1,
                     varnames = c('N', 'alpha', 'theta1', 'theta2'))
 
-summary(tmp)
+summary.dpsim(tmp)
 
 
 #individual data

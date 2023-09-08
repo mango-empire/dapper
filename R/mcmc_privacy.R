@@ -26,6 +26,7 @@ mcmc_privacy <- function(data_model,
   st_update <- data_model$st_update
   npar <- data_model$npar
 
+  accept_mat <- matrix(NA, nrow = niter, ncol = chains)
   theta_clist <- list()
   ret_val <- NULL
   cat("\n")
@@ -37,8 +38,8 @@ mcmc_privacy <- function(data_model,
     theta <- init_par
     pb <- utils::txtProgressBar(1, niter * nobs, style=3)
     st <- st_init(d_mat)
-    counter <- 0
     for(i in 1:niter) {
+      counter <- 0
       theta_mat[i,] <- theta
       theta <- post_smpl(d_mat, theta)
       for(j in 1:nobs) {
@@ -60,13 +61,17 @@ mcmc_privacy <- function(data_model,
         }
         utils::setTxtProgressBar(pb, i*nobs + j)
       }
+      accept_mat[i, k] <- counter / nobs
     }
-    if(warmup > 0)
-      theta_clist[[k]] <- theta_mat[-c(1:warmup),]
-    else
+    if(warmup > 0) {
+      theta_clist[[k]] <- theta_mat[-c(1:warmup),,drop = FALSE]
+      accept_mat <- accept_mat[-c(1:warmup),, drop=FALSE]
+    }
+    else {
       theta_clist[[k]] <- theta_mat
+    }
   }
-  new_dpsim(theta_clist, varnames)
+  new_dpsim(theta_clist, accept_mat, varnames)
 }
 
 
@@ -98,7 +103,7 @@ plot.dpsim <- function(object) {
 #' @export
 #'
 #' @examples
-summary.dpsim <- function(object, probs = c(0.025, 0.25, 0.5, 0.75, 0.975), digits = 2) {
-  z <- object[[1]]
-  apply(z, 2, quantile, probs = probs) %>% t() %>% round(digits = digits)
+summary.dpsim <- function(object) {
+  print(paste0("Average Acceptance Probability: ", mean(object$accept_prob)))
+  posterior::summarise_draws(object$chain)
 }
