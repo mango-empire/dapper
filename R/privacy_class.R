@@ -11,18 +11,35 @@
 #' @export
 #'
 #' @examples
-new_privacy <- function(post_smpl,
-                        lik_smpl,
-                        ll_priv_mech,
-                        st_update,
-                        st_calc,
-                        npar)
+new_privacy <- function(post_smpl = NULL,
+                        lik_smpl = NULL,
+                        prop_smpl = NULL,
+                        ll_lik = NULL,
+                        ll_prop = NULL,
+                        ll_prior = NULL,
+                        ll_priv_mech = NULL,
+                        st_update = NULL,
+                        st_calc = NULL,
+                        npar = NULL)
 {
+  plist <- NULL
+  if(is.null(prop_smpl)) {
     plist <- list(post_smpl = post_smpl,
                   lik_smpl = lik_smpl,
                   ll_priv_mech = ll_priv_mech,
                   st_update = st_update,
                   st_calc = st_calc,
                   npar = npar)
+  } else {
+    plist <- list(lik_smpl = lik_smpl,
+                  prop_smpl = prop_smpl,
+                  ll_lik = ll_lik,
+                  ll_prop = ll_prop,
+                  ll_prior = ll_prior,
+                  ll_priv_mech = ll_priv_mech,
+                  st_update = st_update,
+                  st_calc = st_calc,
+                  npar = npar)
+  }
     structure(plist, class = "privacy")
 }

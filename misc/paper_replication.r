@@ -53,9 +53,8 @@ gen_priv_zt <- function(epsilon) {
 }
 
 deltaa <- 13
-set.seed(2)
 n <- 100
-epsilon <- .1
+epsilon <- 10
 xmat <- MASS::mvrnorm(n, mu = c(.9,-1.17), Sigma = diag(2))
 beta <- c(-1.79, -2.89, -0.66)
 y <- cbind(1,xmat) %*% beta + rnorm(n, sd = sqrt(2))
@@ -73,11 +72,11 @@ tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
-                    niter = 10000,
+                    niter = 10,
                     chains = 1,
                     varnames = c("beta0", "beta1", "beta2"))
 
-summary(tmp)
+posterior::summarize_draws(tmp$chain)
 
 
 
