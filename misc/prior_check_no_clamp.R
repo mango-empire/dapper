@@ -88,7 +88,7 @@ gen_priv <- function(epsilon) {
 }
 
 ll_prop <- function(dmat, theta, theta_prop) {
-  dnorm(theta_prop, mean = mean(dmat), sd = 3 , log = TRUE)
+  dnorm(theta_prop, mean = 0, sd = 2 , log = TRUE)
 }
 
 ll_prior <- function(theta) {
@@ -96,7 +96,7 @@ ll_prior <- function(theta) {
 }
 
 prop_smpl <- function(dmat, theta) {
-  rnorm(1, mean = mean(dmat), sd = 3)
+  rnorm(1, mean = 0, sd = 2)
 }
 
 
