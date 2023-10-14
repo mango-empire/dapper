@@ -66,13 +66,13 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     ll_priv_mech = gen_priv_zt(epsilon),
                     st_update = st_update,
                     st_calc = st_init,
-                    npar = 3)
+                    npar = 4)
 
 tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
-                    niter = 10000,
+                    niter = 10,
                     chains = 1,
                     varnames = c("beta0", "beta1", "beta2"))
 
@@ -104,7 +104,7 @@ tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
-                    niter = 10000,
+                    niter =  3,
                     warmup = 100,
                     chains = 1)
 
