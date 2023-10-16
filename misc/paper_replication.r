@@ -66,13 +66,22 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     ll_priv_mech = gen_priv_zt(epsilon),
                     st_update = st_update,
                     st_calc = st_init,
+<<<<<<< HEAD
                     npar = 3)
 profvis::profvis({
+=======
+                    npar = 4)
+
+>>>>>>> 7533517b6202d31970f97642c575591b7e7532ae
 tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
+<<<<<<< HEAD
                     niter = 5000,
+=======
+                    niter = 10,
+>>>>>>> 7533517b6202d31970f97642c575591b7e7532ae
                     chains = 1,
                     varnames = c("beta0", "beta1", "beta2"))})
 
@@ -104,7 +113,7 @@ tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
-                    niter = 10000,
+                    niter =  3,
                     warmup = 100,
                     chains = 1)
 
