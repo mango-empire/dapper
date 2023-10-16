@@ -54,7 +54,7 @@ gen_priv_zt <- function(epsilon) {
 
 deltaa <- 13
 n <- 5
-epsilon <- 5pro
+epsilon <- 100
 xmat <- MASS::mvrnorm(n, mu = c(.9,-1.17), Sigma = diag(2))
 beta <- c(-1.79, -2.89, -0.66)
 y <- cbind(1,xmat) %*% beta + rnorm(n, sd = sqrt(2))
@@ -66,27 +66,50 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     ll_priv_mech = gen_priv_zt(epsilon),
                     st_update = st_update,
                     st_calc = st_init,
-<<<<<<< HEAD
                     npar = 3)
-profvis::profvis({
-=======
-                    npar = 4)
 
->>>>>>> 7533517b6202d31970f97642c575591b7e7532ae
 tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
-<<<<<<< HEAD
                     niter = 5000,
-=======
                     niter = 10,
->>>>>>> 7533517b6202d31970f97642c575591b7e7532ae
                     chains = 1,
-                    varnames = c("beta0", "beta1", "beta2"))})
+                    varnames = c("beta0", "beta1", "beta2"))
 
 posterior::summarize_draws(tmp$chain)
 bayesplot::mcmc_trace(tmp$chain)
+
+
+#--------
+
+deltaa <- 13
+n <- 5
+epsilon <- 20
+xmat <- MASS::mvrnorm(n, mu = c(.9,-1.17), Sigma = diag(2))
+beta <- c(-1.79, -2.89, -0.66)
+y <- cbind(1,xmat) %*% beta + rnorm(n, sd = sqrt(2))
+z <- tstat(cbind(y,xmat))
+z <- z + VGAM::rlaplace(length(z), location = 0, scale = deltaa/epsilon)
+
+dmod <- new_privacy(post_smpl = post_smpl,
+                    lik_smpl = lik_smpl,
+                    ll_priv_mech = gen_priv_zt(epsilon),
+                    st_calc = st_init,
+                    add = TRUE,
+                    npar = 3)
+
+tmp <- mcmc_privacy(dmod,
+                    sdp = z,
+                    nobs = n,
+                    init_par = beta,
+                    niter = 5000,
+                    chains = 1,
+                    varnames = c("beta0", "beta1", "beta2"))
+
+posterior::summarize_draws(tmp$chain)
+bayesplot::mcmc_trace(tmp$chain)
+
 
 
 
