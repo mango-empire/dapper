@@ -19,6 +19,7 @@ Imports:
     checkmate,
     DiscreteLaplace,
     extraDistr,
+    foreach,
     graphics,
     posterior,
     stats,

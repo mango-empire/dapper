@@ -66,9 +66,9 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     ll_priv_mech = gen_priv_zt(epsilon),
                     st_update = st_update,
                     st_calc = st_init,
-                    npar = 4)
+                    npar = 3)
 
-tmp <- mcmc_privacy(dmod,
+tmp <- mcmc_privacy_par(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,

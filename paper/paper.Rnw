@@ -47,9 +47,16 @@ P(X = x) &= \dfrac{\exp(-(x-\mu)^2/2\sigma^2)}{\sum_{y \in \mathbb{Z}} \exp(-(y-
 \end{align*}
 \end{definition}
 
+\section*{Simple Example}
+Assume we add noise to sample mean estimate.
+<<echo = TRUE>>=
+
+
+@
+
 \section*{Linear Regression with Clamping}
 
-Generate simulated data
+(dp paper) considers a simple linear regression model with
 
 <<echo = TRUE>>=
 set.seed(1)
