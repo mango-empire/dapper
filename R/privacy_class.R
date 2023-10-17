@@ -14,22 +14,23 @@
 new_privacy <- function(post_smpl = NULL,
                         lik_smpl = NULL,
                         ll_priv_mech = NULL,
-                        st_update = NULL,
                         st_calc = NULL,
+                        add = FALSE,
                         npar = NULL)
 {
   checkmate::assert_function(post_smpl)
   checkmate::assert_function(lik_smpl)
   checkmate::assert_function(ll_priv_mech)
   checkmate::assert_function(st_calc)
+  checkmate::assert_logical(add)
   if(!is.null(st_calc)) checkmate::assert_function(st_calc)
   checkmate::assert_int(npar)
 
   plist <- list(post_smpl = post_smpl,
                   lik_smpl = lik_smpl,
                   ll_priv_mech = ll_priv_mech,
-                  st_update = st_update,
                   st_calc = st_calc,
+                  add = add,
                   npar = npar)
   structure(plist, class = "privacy")
 }

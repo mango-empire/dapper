@@ -44,7 +44,7 @@ tstat <- function(dmat) {
 
 set.seed(1)
 deltaa <- 13
-epsilon <- 2
+epsilon <- 10
 n <- 100
 xmat <- MASS::mvrnorm(n, mu = c(.9,-1.17), Sigma = diag(2))
 beta <- c(-1.79, -2.89, -0.66)
@@ -52,11 +52,7 @@ y <- cbind(1,xmat) %*% beta + rnorm(n, sd = sqrt(2))
 sdp <- tstat(cbind(y,xmat))
 sdp <- sdp + VGAM::rlaplace(length(sdp), location = 0, scale = deltaa/epsilon)
 
-
-tmpdf <- as_tibble(cbind(y, xmat))
-lm(V1 ~ ., data =tmpdf)
-
-nsim <- 10000
+nsim <- 1000
 xm <- cbind(y,xmat)
 xm <- xm - xm
 beta_mat <- matrix(0, nrow = nsim, ncol = 3)
