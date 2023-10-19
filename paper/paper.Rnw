@@ -21,20 +21,25 @@
 
 \begin{abstract}
     This paper serves as a reference and introduction on using the $\dpn$ R
-    package. This package provides a frame work for adapting an existing
-    Bayesian analysis to account for privatized data. A key strength of
+    package. The goal of this package is to provide tools to explore the
+    impact of different privacy regimes on a Bayesian analysis. A key strength of
     this framework is the ability to target the exact posterior in settings
     where the likelihood is too complex to analytically express. The main
-    purpose of the package is to ingest three model components and return
+    purpose of the package is to ingest four model components and return
     a Markov chain targeting the posterior given the privatized data. These
     model components are the (1) naive posterior sampler (2) likelihood sampler
-    and (3) privacy mechanism. Other optional components can be specified to
-    speed up calculations. Several working examples are given.
+    (3) privacy mechanism and (4) summary statistic.
 \end{abstract}
 
 \section*{Introduction}
+Introduce some basic notation
 
-Blah blah introduce differential privacy.
+\begin{enumerate}
+  \item $\pi(\theta \mid x)$.
+  \item $f(x \mid \theta)$.
+  \item $\eta(s_{dp} \mid x)$.
+  \item $T(x)$.
+\end{enumerate}
 
 \section*{Simple Binomial Proportion}
 Reference the transportation example. Discrete Gaussian distribution

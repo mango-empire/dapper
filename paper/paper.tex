@@ -70,20 +70,25 @@
 
 \begin{abstract}
     This paper serves as a reference and introduction on using the $\dpn$ R
-    package. This package provides a frame work for adapting an existing
-    Bayesian analysis to account for privatized data. A key strength of
+    package. The goal of this package is to provide tools to explore the
+    impact of different privacy regimes on a Bayesian analysis. A key strength of
     this framework is the ability to target the exact posterior in settings
     where the likelihood is too complex to analytically express. The main
-    purpose of the package is to ingest three model components and return
+    purpose of the package is to ingest four model components and return
     a Markov chain targeting the posterior given the privatized data. These
     model components are the (1) naive posterior sampler (2) likelihood sampler
-    and (3) privacy mechanism. Other optional components can be specified to
-    speed up calculations. Several working examples are given.
+    (3) privacy mechanism and (4) summary statistic.
 \end{abstract}
 
 \section*{Introduction}
+Introduce some basic notation
 
-Blah blah introduce differential privacy.
+\begin{enumerate}
+  \item $\pi(\theta \mid x)$.
+  \item $f(x \mid \theta)$.
+  \item $\eta(s_{dp} \mid x)$.
+  \item $T(x)$.
+\end{enumerate}
 
 \section*{Simple Binomial Proportion}
 Reference the transportation example. Discrete Gaussian distribution
@@ -97,6 +102,123 @@ P(X = x) &= \dfrac{\exp(-(x-\mu)^2/2\sigma^2)}{\sum_{y \in \mathbb{Z}} \exp(-(y-
 \end{definition}
 
 \section*{Linear Regression with Clamping}
+
+Generate simulated data
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+\hlstd{deltaa} \hlkwb{<-} \hlnum{13}
+\hlstd{n} \hlkwb{<-} \hlnum{100}
+\hlstd{epsilon} \hlkwb{<-} \hlnum{100}
+\hlstd{xmat} \hlkwb{<-} \hlstd{MASS}\hlopt{::}\hlkwd{mvrnorm}\hlstd{(n,} \hlkwc{mu} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{.9}\hlstd{,}\hlopt{-}\hlnum{1.17}\hlstd{),} \hlkwc{Sigma} \hlstd{=} \hlkwd{diag}\hlstd{(}\hlnum{2}\hlstd{))}
+\hlstd{beta} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1.79}\hlstd{,} \hlopt{-}\hlnum{2.89}\hlstd{,} \hlopt{-}\hlnum{0.66}\hlstd{)}
+\hlstd{y} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{,xmat)} \hlopt{%*%} \hlstd{beta} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(}\hlnum{2}\hlstd{))}
+\hlstd{z} \hlkwb{<-} \hlkwd{tstat}\hlstd{(}\hlkwd{cbind}\hlstd{(y,xmat))}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in tstat(cbind(y, xmat)): could not find function "{}tstat"{}}}\begin{alltt}
+\hlstd{sdp} \hlkwb{<-} \hlstd{z} \hlopt{+} \hlstd{VGAM}\hlopt{::}\hlkwd{rlaplace}\hlstd{(}\hlkwd{length}\hlstd{(z),} \hlkwc{location} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{scale} \hlstd{= deltaa}\hlopt{/}\hlstd{epsilon)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'z' not found}}\begin{alltt}
+\hlstd{sdp}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'sdp' not found}}\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#define model}
+\hlstd{post_smpl} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dmat}\hlstd{,} \hlkwc{theta}\hlstd{) \{}
+  \hlstd{x} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{,dmat[,}\hlopt{-}\hlnum{1}\hlstd{])}
+  \hlstd{y} \hlkwb{<-} \hlstd{dmat[,}\hlnum{1}\hlstd{]}
+
+  \hlstd{ps_s2} \hlkwb{<-} \hlkwd{solve}\hlstd{((}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)} \hlopt{*} \hlkwd{t}\hlstd{(x)} \hlopt{%*%} \hlstd{x} \hlopt{+} \hlstd{(}\hlnum{1}\hlopt{/}\hlnum{4}\hlstd{)} \hlopt{*} \hlkwd{diag}\hlstd{(}\hlnum{3}\hlstd{))}
+  \hlstd{ps_m} \hlkwb{<-} \hlstd{ps_s2} \hlopt{%*%} \hlstd{(}\hlkwd{t}\hlstd{(x)} \hlopt{%*%} \hlstd{y)} \hlopt{*} \hlstd{(}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)}
+
+  \hlstd{MASS}\hlopt{::}\hlkwd{mvrnorm}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{mu} \hlstd{= ps_m,} \hlkwc{Sigma} \hlstd{= ps_s2)}
+\hlstd{\}}
+
+\hlstd{lik_smpl} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{) \{}
+  \hlstd{xmat} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rnorm}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{.9}\hlstd{),} \hlkwd{rnorm}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlopt{-}\hlnum{1.17}\hlstd{))}
+  \hlstd{y} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,xmat)} \hlopt{%*%} \hlstd{theta} \hlopt{+} \hlkwd{rnorm}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(}\hlnum{2}\hlstd{))}
+  \hlkwd{c}\hlstd{(y,xmat)}
+\hlstd{\}}
+
+\hlstd{clamp_data} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dmat}\hlstd{) \{}
+  \hlkwd{pmin}\hlstd{(}\hlkwd{pmax}\hlstd{(dmat,}\hlopt{-}\hlnum{10}\hlstd{),}\hlnum{10}\hlstd{)} \hlopt{/} \hlnum{10}
+\hlstd{\}}
+
+\hlstd{tstat} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dmat}\hlstd{) \{}
+  \hlstd{sdp_mat} \hlkwb{<-} \hlkwd{clamp_data}\hlstd{(dmat)}
+  \hlstd{ydp} \hlkwb{<-} \hlstd{sdp_mat[,}\hlnum{1}\hlstd{,} \hlkwc{drop} \hlstd{=} \hlnum{FALSE}\hlstd{]}
+  \hlstd{xdp} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{,sdp_mat[,}\hlopt{-}\hlnum{1}\hlstd{,} \hlkwc{drop} \hlstd{=} \hlnum{FALSE}\hlstd{])}
+
+  \hlstd{s1} \hlkwb{<-} \hlkwd{t}\hlstd{(xdp)} \hlopt{%*%} \hlstd{ydp}
+  \hlstd{s2} \hlkwb{<-} \hlkwd{t}\hlstd{(ydp)} \hlopt{%*%} \hlstd{ydp}
+  \hlstd{s3} \hlkwb{<-} \hlkwd{t}\hlstd{(xdp)} \hlopt{%*%} \hlstd{xdp}
+
+  \hlstd{ur_s1} \hlkwb{<-} \hlkwd{c}\hlstd{(s1)}
+  \hlstd{ur_s2} \hlkwb{<-} \hlkwd{c}\hlstd{(s2)}
+  \hlstd{ur_s3} \hlkwb{<-} \hlstd{s3[}\hlkwd{upper.tri}\hlstd{(s3,}\hlkwc{diag} \hlstd{=} \hlnum{TRUE}\hlstd{)][}\hlopt{-}\hlnum{1}\hlstd{]}
+  \hlkwd{c}\hlstd{(ur_s1,ur_s2,ur_s3)}
+\hlstd{\}}
+
+\hlstd{st_update} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{st}\hlstd{,} \hlkwc{xs}\hlstd{,} \hlkwc{xo}\hlstd{) \{}
+  \hlstd{st} \hlopt{-} \hlkwd{tstat}\hlstd{(}\hlkwd{t}\hlstd{(xo))} \hlopt{+} \hlkwd{tstat}\hlstd{(}\hlkwd{t}\hlstd{(xs))}
+\hlstd{\}}
+
+\hlstd{st_init} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dmat}\hlstd{) \{}
+  \hlkwd{tstat}\hlstd{(dmat)}
+\hlstd{\}}
+
+
+\hlstd{gen_priv_zt} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{epsilon}\hlstd{) \{}
+  \hlkwa{function}\hlstd{(}\hlkwc{sdp}\hlstd{,} \hlkwc{zt}\hlstd{) \{}
+    \hlkwd{sum}\hlstd{(VGAM}\hlopt{::}\hlkwd{dlaplace}\hlstd{(sdp} \hlopt{-} \hlstd{zt,} \hlnum{0}\hlstd{, deltaa}\hlopt{/}\hlstd{epsilon,} \hlnum{TRUE}\hlstd{))}
+  \hlstd{\}}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{dmod} \hlkwb{<-} \hlkwd{new_privacy}\hlstd{(}\hlkwc{post_smpl} \hlstd{= post_smpl,}
+                    \hlkwc{lik_smpl} \hlstd{= lik_smpl,}
+                    \hlkwc{ll_priv_mech} \hlstd{=} \hlkwd{gen_priv_zt}\hlstd{(epsilon),}
+                    \hlkwc{st_update} \hlstd{= st_update,}
+                    \hlkwc{st_calc} \hlstd{= st_init,}
+                    \hlkwc{npar} \hlstd{=} \hlnum{3}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in new\_privacy(post\_smpl = post\_smpl, lik\_smpl = lik\_smpl, ll\_priv\_mech = gen\_priv\_zt(epsilon), : could not find function "{}new\_privacy"{}}}\begin{alltt}
+\hlstd{tmp} \hlkwb{<-} \hlkwd{mcmc_privacy}\hlstd{(dmod,}
+                    \hlkwc{sdp} \hlstd{= sdp,}
+                    \hlkwc{nobs} \hlstd{= n,}
+                    \hlkwc{init_par} \hlstd{= beta,}
+                    \hlkwc{niter} \hlstd{=} \hlnum{1000}\hlstd{,}
+                    \hlkwc{chains} \hlstd{=} \hlnum{1}\hlstd{,}
+                    \hlkwc{varnames} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"beta0"}\hlstd{,} \hlstr{"beta1"}\hlstd{,} \hlstr{"beta2"}\hlstd{))}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mcmc\_privacy(dmod, sdp = sdp, nobs = n, init\_par = beta, niter = 1000, : could not find function "{}mcmc\_privacy"{}}}\begin{alltt}
+\hlstd{posterior}\hlopt{::}\hlkwd{summarize_draws}\hlstd{(tmp}\hlopt{$}\hlstd{chain)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in posterior::summarize\_draws(tmp\$chain): object 'tmp' not found}}\end{kframe}
+\end{knitrout}
 
 
 \end{document}
