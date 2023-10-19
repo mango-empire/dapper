@@ -37,6 +37,8 @@ tstat <- function(dmat) {
   c(ur_s1,ur_s2,ur_s3)
 }
 
+tstat <- compiler::cmpfun(tstat)
+
 st_update <- function(st, xs, xo) {
   st - tstat(t(xo)) + tstat(t(xs))
 }
@@ -64,22 +66,22 @@ z <- z + VGAM::rlaplace(length(z), location = 0, scale = deltaa/epsilon)
 dmod <- new_privacy(post_smpl = post_smpl,
                     lik_smpl = lik_smpl,
                     ll_priv_mech = gen_priv_zt(epsilon),
-                    st_update = st_update,
                     st_calc = st_init,
                     npar = 3)
 
-tmp <- mcmc_privacy_par(dmod,
+tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
-                    niter = 5000,
-                    niter = 10,
+                    niter = 10000,
                     chains = 1,
                     varnames = c("beta0", "beta1", "beta2"))
 
 posterior::summarize_draws(tmp$chain)
 bayesplot::mcmc_trace(tmp$chain)
 
+
+wrap_fn
 
 #--------
 
