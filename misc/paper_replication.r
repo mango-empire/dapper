@@ -39,6 +39,7 @@ tstat <- function(dmat) {
 
 tstat <- compiler::cmpfun(tstat)
 
+
 st_update <- function(st, xs, xo) {
   st - tstat(t(xo)) + tstat(t(xs))
 }
@@ -69,13 +70,14 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     st_calc = st_init,
                     npar = 3)
 
+system.time({
 tmp <- mcmc_privacy(dmod,
                     sdp = z,
                     nobs = n,
                     init_par = beta,
-                    niter = 10000,
+                    niter = 5000,
                     chains = 1,
-                    varnames = c("beta0", "beta1", "beta2"))
+                    varnames = c("beta0", "beta1", "beta2"))})
 
 posterior::summarize_draws(tmp$chain)
 bayesplot::mcmc_trace(tmp$chain)
