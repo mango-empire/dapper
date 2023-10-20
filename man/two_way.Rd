@@ -4,7 +4,7 @@
 \alias{two_way}
 \title{DP aware inference for two way table.}
 \usage{
-two_way(cell_values, n_total, epsilon, niter = 100)
+two_way(cell_values, n_total, rho, niter = 100, chains = 1)
 }
 \arguments{
 \item{init_par}{}
@@ -17,9 +17,9 @@ DP aware inference for two way table.
 }
 \examples{
 set.seed(1)
-epsilon <- .02
+rho <- 3.325 * 3.01 * 10^(-2)
 tval <- stats::rmultinom(1, 300, c(.20,.15,.35,.30))
-sdp <- sapply(tval, function(s) extraDistr::rlaplace(1,mu = s, sigma = 1/epsilon))
-sout <- two_way(sdp, sum(tval), epsilon, 5000)
+sdp <- sapply(tval, function(s) rdpnorm(1, 0, sqrt(1/rho))) + tval
+sout <- two_way(sdp, sum(tval), rho, 8000)
 plot(sout)
 }

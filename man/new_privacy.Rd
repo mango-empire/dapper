@@ -4,20 +4,27 @@
 \alias{new_privacy}
 \title{Creates data model}
 \usage{
-new_privacy(post_smpl, lik_smpl, ll_priv_mech, st_update, st_calc, npar)
+new_privacy(
+  post_smpl = NULL,
+  lik_smpl = NULL,
+  ll_priv_mech = NULL,
+  st_calc = NULL,
+  add = FALSE,
+  npar = NULL
+)
 }
 \arguments{
 \item{post_smpl}{A function that draws posterior samples.}
 
 \item{lik_smpl}{The sampling model.}
 
-\item{ll_priv_mech}{The log likelihood of the privacy mechanism.}
-
-\item{st_update}{Update function for statistic.}
+\item{ll_priv_mech}{The log likelihood of the privacy mechanism modulo an additive constant.}
 
 \item{st_calc}{calculate st statistic.}
 
 \item{npar}{Number of parameters.}
+
+\item{st_update}{Update function for statistic.}
 }
 \value{
 A data model of class privacy. Is a S3 object.

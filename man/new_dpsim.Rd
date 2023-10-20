@@ -4,7 +4,7 @@
 \alias{new_dpsim}
 \title{Creates simulation object}
 \usage{
-new_dpsim(theta)
+new_dpsim(theta, accept_mat, varnames = NULL)
 }
 \arguments{
 \item{theta}{}

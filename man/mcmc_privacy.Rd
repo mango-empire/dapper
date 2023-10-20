@@ -4,7 +4,16 @@
 \alias{mcmc_privacy}
 \title{Sample from posterior}
 \usage{
-mcmc_privacy(data_model, sdp, nobs, init_par, niter)
+mcmc_privacy(
+  data_model,
+  sdp,
+  nobs,
+  init_par,
+  niter = 2000,
+  chains = 1,
+  warmup = floor(niter/2),
+  varnames = NULL
+)
 }
 \arguments{
 \item{data_model}{A data model created using the privacy class.}
