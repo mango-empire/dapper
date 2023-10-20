@@ -83,30 +83,9 @@ mcmc_privacy <- function(data_model,
   new_dpsim(theta_clist, accept_mat, varnames)
 }
 
-
-#' Plot simulation object
+#' Summarise dpsim object.
 #'
-#' @param object
-#'
-#' @return
-#' @export
-#'
-#' @examples
-plot.dpsim <- function(object) {
-  z <- object[[1]]
-  npar <- ncol(z)
-  gsize <- ceiling(sqrt(npar))
-  graphics::par(mfrow=c(gsize,gsize))
-  xi <- 1:nrow(z)
-  for(i in 1:npar) {
-    plot(xi,z[,i])
-  }
-}
-
-
-#' Create Summary Object
-#'
-#' @param object
+#' @param dpsim object
 #'
 #' @return
 #' @export
