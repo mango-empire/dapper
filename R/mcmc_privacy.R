@@ -1,11 +1,14 @@
 
-#' Sample from posterior
+#' Sample from posterior given private data
 #'
 #' @param data_model A data model created using the privacy class.
 #' @param sdp The observed privatized data.
 #' @param nobs The number of observations.
 #' @param init_par Initial starting point of the chain.
 #' @param niter Number of draws.
+#' @param chains Number of chains. The default is 1.
+#' @param warmup Number of iterations to discard as warmup. Default is half of niter.
+#' @param varnames Optional character vector specifying parameter names in the output.
 #'
 #' @return A matrix of posterior samples.
 #' @export
@@ -83,15 +86,15 @@ mcmc_privacy <- function(data_model,
   new_dpsim(theta_clist, accept_mat, varnames)
 }
 
-#' Summarise dpsim object.
+#' Summarise dpout object.
 #'
-#' @param dpsim object
+#' @param dpout object
 #'
 #' @return
 #' @export
 #'
 #' @examples
-summary.dpsim <- function(object) {
+summary.dpout <- function(object) {
   print(paste0("Average Acceptance Probability: ", mean(object$accept_prob)))
   posterior::summarise_draws(object$chain)
 }

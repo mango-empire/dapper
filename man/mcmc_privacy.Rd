@@ -2,7 +2,7 @@
 % Please edit documentation in R/mcmc_privacy.R
 \name{mcmc_privacy}
 \alias{mcmc_privacy}
-\title{Sample from posterior}
+\title{Sample from posterior given private data}
 \usage{
 mcmc_privacy(
   data_model,
@@ -25,10 +25,16 @@ mcmc_privacy(
 \item{init_par}{Initial starting point of the chain.}
 
 \item{niter}{Number of draws.}
+
+\item{chains}{Number of chains. The default is 1.}
+
+\item{warmup}{Number of iterations to discard as warmup. Default is half of niter.}
+
+\item{varnames}{Optional character vector specifying parameter names in the output.}
 }
 \value{
 A matrix of posterior samples.
 }
 \description{
-Sample from posterior
+Sample from posterior given private data
 }
