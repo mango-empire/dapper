@@ -83,7 +83,7 @@ mcmc_privacy <- function(data_model,
       theta_clist[[k]] <- theta_mat
     }
   }
-  new_dpsim(theta_clist, accept_mat, varnames)
+  new_dpout(theta_clist, accept_mat, varnames)
 }
 
 #' Summarise dpout object.
