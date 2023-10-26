@@ -386,7 +386,7 @@ tmp <- mcmc_privacy(dmod,
 
 summary(tmp)
 
-
+bayesplot::mcmc_trace(tmp$chain)
 
 
 
