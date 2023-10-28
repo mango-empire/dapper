@@ -47,7 +47,8 @@ gdp_sample <- function(data_model,
     d_mat <- do.call(rbind, d_mat)
     theta_mat <- matrix(0, nrow = niter, ncol = npar)
     theta <- init_par
-    pb <- utils::txtProgressBar(1, niter * nobs, style=3)
+    pb_size <- floor(niter/100)
+    pb <- progressr::progressor(pb_size)
     st <- st_calc(d_mat)
     for(i in 1:niter) {
       counter <- 0
@@ -71,9 +72,9 @@ gdp_sample <- function(data_model,
           d_mat[j,] <- xs
           st <- sn
         }
-        utils::setTxtProgressBar(pb, i*nobs + j)
       }
       accept_mat[i, k] <- counter / nobs
+      if(i %% 100 == 0) pb()
     }
     if(warmup > 0) {
       theta_clist[[k]] <- theta_mat[-c(1:warmup),,drop = FALSE]
@@ -83,7 +84,7 @@ gdp_sample <- function(data_model,
       theta_clist[[k]] <- theta_mat
     }
   }
-  new_dpout(theta_clist, accept_mat, varnames)
+  new_gdpout(theta_clist, accept_mat, varnames)
 }
 
 #' Summarise dpout object.

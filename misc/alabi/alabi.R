@@ -277,14 +277,15 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     st_calc = st_calc,
                     add = FALSE,
                     npar = 2)
-profvis::profvis({
-tmp <- mcmc_privacy(dmod,
-                    sdp = sdp,
-                    nobs = n,
-                    init_par = c(1,1),
-                    niter = 1000,
-                    chains = 1,
-                    varnames = c("alpha", "beta"))})
+handlers("cli")
+with_progress({
+tmp <- gdp_sample(dmod,
+                  sdp = sdp,
+                  nobs = n,
+                  init_par = c(1,1),
+                  niter = 5000,
+                  chains = 1,
+                  varnames = c("alpha", "beta"))})
 
 summary(tmp)
 
