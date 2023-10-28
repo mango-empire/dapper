@@ -1,9 +1,8 @@
 #' Creates simulation object
 #'
-#' @param theta
+#' @param theta parameter
 #'
 #' @return a simulation object
-#' @export
 #'
 #' @examples
 new_gdpout <- function(theta, accept_mat, varnames = NULL) {

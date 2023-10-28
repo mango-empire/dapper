@@ -283,8 +283,7 @@ tmp <- gdp_sample(dmod,
                   sdp = sdp,
                   nobs = n,
                   init_par = c(1,1),
-                  niter = 5000,
-                  chains = 1,
+                  niter = 500,
                   varnames = c("alpha", "beta"))})
 
 summary(tmp)

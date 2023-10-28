@@ -6,7 +6,6 @@
 #' @param nobs The number of observations.
 #' @param init_par Initial starting point of the chain.
 #' @param niter Number of draws.
-#' @param chains Number of chains. The default is 1.
 #' @param warmup Number of iterations to discard as warmup. Default is half of niter.
 #' @param varnames Optional character vector specifying parameter names in the output.
 #'
@@ -19,7 +18,6 @@ gdp_sample <- function(data_model, sdp, nobs, init_par,
   #check inputs
   checkmate::qassert(nobs, "X?(0,)")
   checkmate::qassert(niter, "X?(0,)")
-  checkmate::qassert(chains, "X?(0,)")
   checkmate::qassert(varnames, c("0", "s+"))
   checkmate::assert_class(data_model, "privacy")
   if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")

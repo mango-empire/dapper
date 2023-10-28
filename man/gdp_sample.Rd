@@ -28,8 +28,6 @@ gdp_sample(
 \item{warmup}{Number of iterations to discard as warmup. Default is half of niter.}
 
 \item{varnames}{Optional character vector specifying parameter names in the output.}
-
-\item{chains}{Number of chains. The default is 1.}
 }
 \value{
 A matrix of posterior samples.

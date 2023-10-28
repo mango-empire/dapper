@@ -2,5 +2,4 @@
 
 S3method(summary,gdpout)
 export(gdp_sample)
-export(new_gdpout)
 export(new_privacy)
