@@ -22,5 +22,6 @@ Imports:
     foreach,
     graphics,
     posterior,
+    progressr,
     stats,
     utils

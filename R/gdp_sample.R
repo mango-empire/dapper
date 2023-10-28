@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-mcmc_privacy <- function(data_model,
+gdp_sample <- function(data_model,
                          sdp,
                          nobs,
                          init_par,
@@ -90,7 +90,7 @@ mcmc_privacy <- function(data_model,
 #'
 #' @param dpout object
 #'
-#' @return
+#' @return summary table
 #' @export
 #'
 #' @examples

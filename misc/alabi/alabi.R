@@ -307,8 +307,9 @@ lupost_factory <- function(x, y) {
     alpha <- theta[1]
     beta <- theta[2]
     sy <- exp(theta[3])
-    t1 <- dnorm(y, mean = alpha + beta * x, sd = sy, log = TRUE)
-    sum(t1)
+    t1 <- dnorm(theta[3], mean =  0, sd = 10, log = TRUE)
+    t2 <- dnorm(y, mean = alpha + beta * x, sd = sy, log = TRUE)
+    sum(c(t1,t2))
   }
 }
 
