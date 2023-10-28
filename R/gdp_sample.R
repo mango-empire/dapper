@@ -14,14 +14,8 @@
 #' @export
 #'
 #' @examples
-gdp_sample <- function(data_model,
-                         sdp,
-                         nobs,
-                         init_par,
-                         niter = 2000,
-                         chains = 1,
-                         warmup = floor(niter / 2),
-                         varnames = NULL) {
+gdp_sample <- function(data_model, sdp, nobs, init_par,
+                       niter = 2000, warmup = floor(niter / 2), varnames = NULL) {
   #check inputs
   checkmate::qassert(nobs, "X?(0,)")
   checkmate::qassert(niter, "X?(0,)")
@@ -37,54 +31,53 @@ gdp_sample <- function(data_model,
   st_calc <- data_model$st_calc
   npar <- data_model$npar
 
-  accept_mat <- matrix(NA, nrow = niter, ncol = chains)
+  accept_rate <- numeric(niter)
   theta_clist <- list()
   ret_val <- NULL
-  cat("\n")
-  for(k in 1:chains) {
-    print(paste0(cat("\n"), "Chain: ", k, "/", chains, cat("\n")))
-    d_mat <- lapply(1:nobs, function(s) lik_smpl(init_par))
-    d_mat <- do.call(rbind, d_mat)
-    theta_mat <- matrix(0, nrow = niter, ncol = npar)
-    theta <- init_par
-    pb_size <- floor(niter/100)
-    pb <- progressr::progressor(pb_size)
-    st <- st_calc(d_mat)
-    for(i in 1:niter) {
-      counter <- 0
-      theta_mat[i,] <- theta
-      theta <- post_smpl(d_mat, theta)
-      for(j in 1:nobs) {
-        xs <- lik_smpl(theta)
-        xo <- d_mat[j,]
-        sn <- NULL
-        if(!data_model$add) {
-          n_mat <- d_mat
-          n_mat[j,] <- xs
-          sn <- st_calc(n_mat)
-        } else {
-          #sn <- st_update(st, xs, xo)
-          sn <- st - st_calc(t(xo)) + st_calc(t(xs))
-        }
-        a <- exp(ll_priv_mech(sdp, sn) - ll_priv_mech(sdp, st))
-        if(stats::runif(1) < min(a,1)) {
-          counter <- counter + 1
-          d_mat[j,] <- xs
-          st <- sn
-        }
+  d_mat <- lapply(1:nobs, function(s)
+  lik_smpl(init_par))
+  d_mat <- do.call(rbind, d_mat)
+  theta_mat <- matrix(0, nrow = niter, ncol = npar)
+  theta <- init_par
+  pb_size <- floor(niter / 100)
+  pb <- progressr::progressor(pb_size)
+  st <- st_calc(d_mat)
+  for (i in 1:niter) {
+    counter <- 0
+    theta_mat[i, ] <- theta
+    theta <- post_smpl(d_mat, theta)
+    for (j in 1:nobs) {
+      xs <- lik_smpl(theta)
+      xo <- d_mat[j, ]
+      sn <- NULL
+      if (!data_model$add) {
+        n_mat <- d_mat
+        n_mat[j, ] <- xs
+        sn <- st_calc(n_mat)
+      } else {
+        #sn <- st_update(st, xs, xo)
+        sn <- st - st_calc(t(xo)) + st_calc(t(xs))
       }
-      accept_mat[i, k] <- counter / nobs
-      if(i %% 100 == 0) pb()
+      a <- exp(ll_priv_mech(sdp, sn) - ll_priv_mech(sdp, st))
+      if (stats::runif(1) < min(a, 1)) {
+        counter <- counter + 1
+        d_mat[j, ] <- xs
+        st <- sn
+      }
     }
-    if(warmup > 0) {
-      theta_clist[[k]] <- theta_mat[-c(1:warmup),,drop = FALSE]
-      accept_mat <- accept_mat[-c(1:warmup),, drop=FALSE]
-    }
-    else {
-      theta_clist[[k]] <- theta_mat
-    }
+    accept_rate <- counter / nobs
+    if (i %% 100 == 0)
+      pb()
   }
-  new_gdpout(theta_clist, accept_mat, varnames)
+  if (warmup > 0) {
+    theta_clist[[1]] <- theta_mat[-c(1:warmup), , drop = FALSE]
+    accept_rate <- accept_rate[-c(1:warmup)]
+  }
+  else {
+    theta_clist[[1]] <- theta_mat
+  }
+
+  new_gdpout(theta_clist, accept_rate, varnames)
 }
 
 #' Summarise dpout object.
@@ -95,7 +88,7 @@ gdp_sample <- function(data_model,
 #' @export
 #'
 #' @examples
-summary.dpout <- function(object) {
+summary.gdpout <- function(object) {
   print(paste0("Average Acceptance Probability: ", mean(object$accept_prob)))
   posterior::summarise_draws(object$chain)
 }
