@@ -277,16 +277,24 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     st_calc = st_calc,
                     add = FALSE,
                     npar = 2)
+
+plan(multisession, workers = 2)
 handlers("cli")
 with_progress({
 tmp <- gdp_sample(dmod,
                   sdp = sdp,
                   nobs = n,
+                  niter = 200,
+                  chains = 2,
                   init_par = c(1,1),
-                  niter = 500,
                   varnames = c("alpha", "beta"))})
 
 summary(tmp)
+
+cargs <- list(data_model = dmod, sdp = sdp, nobs = n,
+              init_par = c(1,1), niter = 200, warmup = 100)
+
+future_map(1:2, function(s) DPloglin::gdp_chain(dmod, sdp, n, init_par, niter, warmup))
 
 
 #-------------------------------------------------------------------------------

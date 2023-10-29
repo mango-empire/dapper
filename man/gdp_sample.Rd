@@ -11,6 +11,7 @@ gdp_sample(
   init_par,
   niter = 2000,
   warmup = floor(niter/2),
+  chains = 1,
   varnames = NULL
 )
 }

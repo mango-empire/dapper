@@ -20,6 +20,7 @@ Imports:
     DiscreteLaplace,
     extraDistr,
     foreach,
+    furrr,
     graphics,
     posterior,
     progressr,

@@ -1,4 +1,3 @@
-
 #' Sample from posterior given private data
 #'
 #' @param data_model A data model created using the privacy class.
@@ -13,15 +12,48 @@
 #' @export
 #'
 #' @examples
-gdp_sample <- function(data_model, sdp, nobs, init_par,
-                       niter = 2000, warmup = floor(niter / 2), varnames = NULL) {
+gdp_sample <- function(data_model,
+                       sdp,
+                       nobs,
+                       init_par,
+                       niter = 2000,
+                       warmup = floor(niter / 2),
+                       chains = 1,
+                       varnames = NULL) {
+  #check inputs
+  checkmate::qassert(chains, "X?(0,)")
+  checkmate::qassert(varnames, c("0", "s+"))
+  if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
+
+  cargs <- list(data_model = data_model, sdp = sdp, nobs = nobs,
+                init_par = init_par, niter = niter, warmup = warmup)
+  fout <- NULL
+  if(chains == 1) {
+    fout <- list(do.call(gdp_chain, cargs))
+  } else {
+    fout <- furrr::future_map(1:chains, function(s) do.call(gdp_chain,cargs),
+                              .options = furrr::furrr_options(seed = TRUE))
+  }
+
+  theta_clist <- lapply(1:chains, function(s) fout[[s]]$sample)
+  accept_mat <- cbind(lapply(1:chains, function(s) fout[[s]]$accept_rate))
+  new_gdpout(theta_clist, accept_mat, varnames)
+}
+
+
+
+
+#' single chain sample
+#' @export
+gdp_chain <- function(data_model,
+                      sdp, nobs,
+                      init_par,
+                      niter = 2000,
+                      warmup = floor(niter / 2)) {
   #check inputs
   checkmate::qassert(nobs, "X?(0,)")
   checkmate::qassert(niter, "X?(0,)")
-  checkmate::qassert(varnames, c("0", "s+"))
   checkmate::assert_class(data_model, "privacy")
-  if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
-
 
   post_smpl <- data_model$post_smpl
   lik_smpl <- data_model$lik_smpl
@@ -63,20 +95,20 @@ gdp_sample <- function(data_model, sdp, nobs, init_par,
         st <- sn
       }
     }
-    accept_rate <- counter / nobs
+    accept_rate[i] <- counter / nobs
     if (i %% 100 == 0)
       pb()
   }
   if (warmup > 0) {
-    theta_clist[[1]] <- theta_mat[-c(1:warmup), , drop = FALSE]
+    #theta_clist[[1]] <- theta_mat[-c(1:warmup), , drop = FALSE]
+    theta_mat <- theta_mat[-c(1:warmup), , drop = FALSE]
     accept_rate <- accept_rate[-c(1:warmup)]
   }
-  else {
-    theta_clist[[1]] <- theta_mat
-  }
-
-  new_gdpout(theta_clist, accept_rate, varnames)
+  #new_gdpout(theta_clist, accept_rate, varnames)
+  list(sample = theta_mat, accept_rate = accept_rate)
 }
+
+
 
 #' Summarise dpout object.
 #'
