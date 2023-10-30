@@ -277,18 +277,57 @@ dmod <- new_privacy(post_smpl = post_smpl,
                     st_calc = st_calc,
                     add = FALSE,
                     npar = 2)
+
+plan(sequential)
+plan(multisession, workers = 2)
 handlers("cli")
 with_progress({
 tmp <- gdp_sample(dmod,
                   sdp = sdp,
                   nobs = n,
+                  niter = 200,
+                  chains = 2,
                   init_par = c(1,1),
-                  niter = 5000,
-                  chains = 1,
                   varnames = c("alpha", "beta"))})
 
 summary(tmp)
 
+cargs <- list(data_model = dmod, sdp = sdp, nobs = n,
+              init_par = c(1,1), niter = 200, warmup = 100)
+
+testf <- function() DPloglin::gdp_chain(dmod, sdp, n, c(1,1), 2000, 50)
+
+future_map(1:2, function(s) testf())
+
+with_progress({
+foreach(a=1:2) %dopar% {
+  gdp_chain(dmod, sdp, n, c(1,1), 2000, 50)
+}})
+
+future.apply::future_lapply(1:2, FUN = gdp_chain)
+
+future::plan("sequential")
+furrr::future_map(1:2, gdp_chain, data_model = dmod,
+                  sdp = sdp, nobs = n,
+                  init_par = c(1,1))
+
+plan(multisession, workers = 2)
+with_progress({
+fout <- furrr::future_map(rep(1000, 2), gdp_chain, data_model = dmod,
+                  sdp = sdp, nobs = n,
+                  init_par = c(1,1),
+                  .options = furrr::furrr_options(seed = TRUE))})
+
+handlers(global = TRUE)
+test <- function() {
+  p <- progressor(1000 * 2)
+  furrr::future_map(rep(1000, 2), gdp_chain, data_model = dmod,
+                    sdp = sdp, nobs = n,
+                    init_par = c(1,1), prg_bar = p,
+                    .options = furrr::furrr_options(seed = TRUE))
+}
+
+with_progress({test()})
 
 #-------------------------------------------------------------------------------
 

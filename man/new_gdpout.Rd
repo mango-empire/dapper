@@ -7,7 +7,7 @@
 new_gdpout(theta, accept_mat, varnames = NULL)
 }
 \arguments{
-\item{theta}{}
+\item{theta}{parameter}
 }
 \value{
 a simulation object
