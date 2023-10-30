@@ -25,18 +25,22 @@ gdp_sample <- function(data_model,
   checkmate::qassert(varnames, c("0", "s+"))
   if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
 
+  pb_size <- floor(niter / 100)
+  p <- progressr::progressor(pb_size * chains)
   cargs <- list(data_model = data_model, sdp = sdp, nobs = nobs,
-                init_par = init_par, niter = niter, warmup = warmup)
+                init_par = init_par, niter = niter, warmup = warmup, prg_bar = p)
   fout <- NULL
   if(chains == 1) {
     fout <- list(do.call(gdp_chain, cargs))
   } else {
-    fout <- furrr::future_map(1:chains, function(s) do.call(gdp_chain,cargs),
+    fout <- furrr::future_map(rep(niter, chains), gdp_chain, data_model = data_model,
+                              sdp = sdp, nobs = nobs, init_par = init_par,
+                              warmup = warmup, prg_bar = p,
                               .options = furrr::furrr_options(seed = TRUE))
   }
 
   theta_clist <- lapply(1:chains, function(s) fout[[s]]$sample)
-  accept_mat <- cbind(lapply(1:chains, function(s) fout[[s]]$accept_rate))
+  accept_mat <- do.call(cbind, lapply(1:chains, function(s) fout[[s]]$accept_rate))
   new_gdpout(theta_clist, accept_mat, varnames)
 }
 
@@ -46,10 +50,12 @@ gdp_sample <- function(data_model,
 #' single chain sample
 #' @export
 gdp_chain <- function(data_model,
-                      sdp, nobs,
+                      sdp,
+                      nobs,
                       init_par,
                       niter = 2000,
-                      warmup = floor(niter / 2)) {
+                      warmup = floor(niter / 2),
+                      prg_bar = NULL) {
   #check inputs
   checkmate::qassert(nobs, "X?(0,)")
   checkmate::qassert(niter, "X?(0,)")
@@ -69,8 +75,8 @@ gdp_chain <- function(data_model,
   d_mat <- do.call(rbind, d_mat)
   theta_mat <- matrix(0, nrow = niter, ncol = npar)
   theta <- init_par
-  pb_size <- floor(niter / 100)
-  pb <- progressr::progressor(pb_size)
+  #pb_size <- floor(niter / 100)
+  #pb <- progressr::progressor(pb_size)
   st <- st_calc(d_mat)
   for (i in 1:niter) {
     counter <- 0
@@ -96,8 +102,7 @@ gdp_chain <- function(data_model,
       }
     }
     accept_rate[i] <- counter / nobs
-    if (i %% 100 == 0)
-      pb()
+    if (i %% 100 == 0) prg_bar()
   }
   if (warmup > 0) {
     #theta_clist[[1]] <- theta_mat[-c(1:warmup), , drop = FALSE]
@@ -116,8 +121,6 @@ gdp_chain <- function(data_model,
 #'
 #' @return summary table
 #' @export
-#'
-#' @examples
 summary.gdpout <- function(object) {
   print(paste0("Average Acceptance Probability: ", mean(object$accept_prob)))
   posterior::summarise_draws(object$chain)

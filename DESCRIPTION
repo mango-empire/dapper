@@ -21,6 +21,7 @@ Imports:
     extraDistr,
     foreach,
     furrr,
+    future.apply,
     graphics,
     posterior,
     progressr,

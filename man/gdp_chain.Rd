@@ -10,7 +10,8 @@ gdp_chain(
   nobs,
   init_par,
   niter = 2000,
-  warmup = floor(niter/2)
+  warmup = floor(niter/2),
+  prg_bar = NULL
 )
 }
 \description{
