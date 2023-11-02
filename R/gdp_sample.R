@@ -117,16 +117,12 @@ gdp_chain <- function(data_model,
 
 #' Summarise dpout object.
 #'
-#' @param dpout object
+#' @param gdpout object
 #'
 #' @return summary table
 #' @export
-<<<<<<< HEAD
-summary.dpout <- function(object) {
-=======
 summary.gdpout <- function(object) {
   print(paste0("Average Acceptance Probability: ", mean(object$accept_prob)))
->>>>>>> 1204c7e2a3089d2ca05884907658026916e66f30
   posterior::summarise_draws(object$chain)
 }
 
@@ -136,7 +132,7 @@ summary.gdpout <- function(object) {
 #'
 #' @return trace plots
 #' @export
-plot.dpout <- function(object) {
+plot.gdpout <- function(object) {
   bayesplot::mcmc_trace(object$chain)
 }
 

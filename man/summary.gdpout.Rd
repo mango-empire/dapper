@@ -7,7 +7,7 @@
 \method{summary}{gdpout}(object)
 }
 \arguments{
-\item{dpout}{object}
+\item{gdpout}{object}
 }
 \value{
 summary table
