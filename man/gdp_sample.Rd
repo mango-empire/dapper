@@ -10,8 +10,8 @@ gdp_sample(
   nobs,
   init_par,
   niter = 2000,
-  chains = 1,
   warmup = floor(niter/2),
+  chains = 1,
   varnames = NULL
 )
 }
@@ -25,8 +25,6 @@ gdp_sample(
 \item{init_par}{Initial starting point of the chain.}
 
 \item{niter}{Number of draws.}
-
-\item{chains}{Number of chains. The default is 1.}
 
 \item{warmup}{Number of iterations to discard as warmup. Default is half of niter.}
 
