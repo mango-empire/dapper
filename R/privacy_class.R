@@ -16,7 +16,8 @@ new_privacy <- function(post_smpl = NULL,
                         ll_priv_mech = NULL,
                         st_calc = NULL,
                         add = FALSE,
-                        npar = NULL)
+                        npar = NULL,
+                        varnames = NULL)
 {
   checkmate::assert_function(post_smpl)
   checkmate::assert_function(lik_smpl)
@@ -31,6 +32,7 @@ new_privacy <- function(post_smpl = NULL,
                   ll_priv_mech = ll_priv_mech,
                   st_calc = st_calc,
                   add = add,
-                  npar = npar)
+                  npar = npar,
+                  varnames = varnames)
   structure(plist, class = "privacy")
 }
