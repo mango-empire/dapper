@@ -26,7 +26,7 @@ test_that("test on simple means model", {
       tstat(dmat)
     }
     lik_smpl <- function(theta) {
-      rnorm(1,mean = theta, sd = 1)
+      matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
     }
     gen_priv <- function(epsilon) {
       function(sdp, zt) {
@@ -85,7 +85,7 @@ test_that("test single observation", {
     tstat(dmat)
   }
   lik_smpl <- function(theta) {
-    rnorm(1,mean = theta, sd = 1)
+    matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
   }
   gen_priv <- function(epsilon) {
     function(sdp, zt) {
