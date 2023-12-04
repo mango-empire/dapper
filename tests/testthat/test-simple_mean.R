@@ -48,9 +48,8 @@ test_that("test on simple means model", {
                         add = TRUE,
                         npar = 1)
 
-    tmp <- gdp_sample(dmod,
+    tmp <- dapper_sample(dmod,
                         sdp = sdp,
-                        nobs = n,
                         init_par = -2,
                         niter = 500)
 
@@ -107,9 +106,8 @@ test_that("test single observation", {
                       st_calc = st_calc,
                       npar = 1)
 
-  tmp <- gdp_sample(dmod,
+  tmp <- dapper_sample(dmod,
                     sdp = sdp,
-                    nobs = n,
                     init_par = -2,
                     niter = 500)
 

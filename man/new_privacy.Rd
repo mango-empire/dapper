@@ -10,21 +10,20 @@ new_privacy(
   ll_priv_mech = NULL,
   st_calc = NULL,
   add = FALSE,
-  npar = NULL
+  npar = NULL,
+  varnames = NULL
 )
 }
 \arguments{
-\item{post_smpl}{A function that draws posterior samples.}
+\item{post_smpl}{A function that draws posterior samples given the confidential data.}
 
 \item{lik_smpl}{The sampling model.}
 
 \item{ll_priv_mech}{The log likelihood of the privacy mechanism modulo an additive constant.}
 
-\item{st_calc}{calculate st statistic.}
+\item{st_calc}{calculate statistic to be released.}
 
-\item{npar}{Number of parameters.}
-
-\item{st_update}{Update function for statistic.}
+\item{npar}{Number of parameters in model.}
 }
 \value{
 A data model of class privacy. Is a S3 object.
