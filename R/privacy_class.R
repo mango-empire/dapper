@@ -12,7 +12,7 @@
 #' @export
 #'
 new_privacy <- function(post_f   = NULL,
-                        latent_f    = NULL,
+                        latent_f = NULL,
                         priv_f   = NULL,
                         st_f     = NULL,
                         add      = FALSE,
@@ -28,7 +28,7 @@ new_privacy <- function(post_f   = NULL,
   checkmate::assert_int(npar)
 
   plist <- list(post_f   = post_f,
-                lik_f    = latent_f,
+                latent_f = latent_f,
                 priv_f   = priv_f,
                 st_f     = st_f,
                 add      = add,

@@ -90,11 +90,11 @@ dapper_chain <- function(data_model,
   checkmate::qassert(niter, "X?(0,)")
   checkmate::assert_class(data_model, "privacy")
 
-  post_f <- data_model$post_f
+  post_f    <- data_model$post_f
   latent_f  <- data_model$latent_f
-  priv_f <- data_model$priv_f
-  st_f   <- data_model$st_f
-  npar   <- data_model$npar
+  priv_f    <- data_model$priv_f
+  st_f      <- data_model$st_f
+  npar      <- data_model$npar
 
   accept_rate <- numeric(niter)
   theta_clist <- list()
