@@ -2,7 +2,7 @@
 #'
 #' @param post_f An R function that draws posterior samples given the confidential data.
 #' @param latent_f The latent data sampling model.
-#' @param priv_f The log likelihood of the privacy mechanism modulo an additive constant.
+#' @param priv_f The log likelihood of the privacy mechanism.
 #' @param st_f calculate statistic to be released.
 #' @param add A logical argument. TRUE if st_f satisfies the record additivity assumption and FALSE otherwise.
 #' @param npar Number of parameters in model.
