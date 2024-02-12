@@ -40,7 +40,7 @@
 #'   sum(dnorm(sdp - zt, 0, 1/eps, TRUE))
 #' }
 #' dmod <- new_privacy(post_f = post_smpl,
-#'   lik_f = lik_smpl,
+#'   latent_f = lik_smpl,
 #'   priv_f = priv_mech,
 #'   st_f = st_calc,
 #'   add = FALSE,
@@ -91,14 +91,14 @@ dapper_chain <- function(data_model,
   checkmate::assert_class(data_model, "privacy")
 
   post_f <- data_model$post_f
-  lik_f  <- data_model$lik_f
+  latent_f  <- data_model$latent_f
   priv_f <- data_model$priv_f
   st_f   <- data_model$st_f
   npar   <- data_model$npar
 
   accept_rate <- numeric(niter)
   theta_clist <- list()
-  dmat        <- lik_f(init_par)
+  dmat        <- latent_f(init_par)
   theta_mat   <- matrix(0, nrow = niter, ncol = npar)
   theta       <- init_par
   st          <- st_f(dmat)
@@ -108,7 +108,7 @@ dapper_chain <- function(data_model,
     counter        <- 0
     theta_mat[i, ] <- theta
     theta          <- post_f(dmat, theta)
-    smat           <- lik_f(theta)
+    smat           <- latent_f(theta)
     for (j in 1:nobs) {
       xs <- smat[j, ]
       xo <- dmat[j, ]

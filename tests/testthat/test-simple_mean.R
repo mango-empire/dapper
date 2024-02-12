@@ -25,7 +25,7 @@ test_that("test on simple means model", {
     st_f <- function(dmat) {
       tstat(dmat)
     }
-    lik_f <- function(theta) {
+    latent_f <- function(theta) {
       matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
     }
     gen_priv <- function(epsilon) {
@@ -42,7 +42,7 @@ test_that("test on simple means model", {
     sdp <- y + extraDistr::rlaplace(1, sigma = 1/epsilon)
 
     dmod <- new_privacy(post_f = post_f,
-                        lik_f = lik_f,
+                        latent_f = latent_f,
                         priv_f = gen_priv(epsilon),
                         st_f = st_f,
                         add = TRUE,
@@ -83,7 +83,7 @@ test_that("test single observation", {
   st_f <- function(dmat) {
     tstat(dmat)
   }
-  lik_f <- function(theta) {
+  latent_f <- function(theta) {
     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
   }
   gen_priv <- function(epsilon) {
@@ -101,7 +101,7 @@ test_that("test single observation", {
   sdp <- y + extraDistr::rlaplace(1, sigma = 1/epsilon)
 
   dmod <- new_privacy(post_f = post_f,
-                      lik_f = lik_f,
+                      latent_f = latent_f,
                       priv_f = gen_priv(epsilon),
                       st_f = st_f,
                       npar = 1)
