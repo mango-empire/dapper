@@ -1,6 +1,6 @@
 test_that("test on simple means model", {
     #prior ~ N(0,2ˆ2)
-    post_smpl <- function(dmat, theta) {
+    post_f <- function(dmat, theta) {
       x <- c(dmat)
       xbar <- mean(x)
       n <- length(x)
@@ -22,10 +22,10 @@ test_that("test on simple means model", {
     tstat <- function(dmat) {
       sum(clamp_data(dmat))
     }
-    st_calc <- function(dmat) {
+    st_f <- function(dmat) {
       tstat(dmat)
     }
-    lik_smpl <- function(theta) {
+    lik_f <- function(theta) {
       matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
     }
     gen_priv <- function(epsilon) {
@@ -41,10 +41,10 @@ test_that("test on simple means model", {
     y <- sum(clamp_data(y))
     sdp <- y + extraDistr::rlaplace(1, sigma = 1/epsilon)
 
-    dmod <- new_privacy(post_smpl = post_smpl,
-                        lik_smpl = lik_smpl,
-                        ll_priv_mech = gen_priv(epsilon),
-                        st_calc = st_calc,
+    dmod <- new_privacy(post_f = post_f,
+                        lik_f = lik_f,
+                        priv_f = gen_priv(epsilon),
+                        st_f = st_f,
                         add = TRUE,
                         npar = 1)
 
@@ -58,7 +58,7 @@ test_that("test on simple means model", {
 
 test_that("test single observation", {
   #prior ~ N(0,2ˆ2)
-  post_smpl <- function(dmat, theta) {
+  post_f <- function(dmat, theta) {
     x <- c(dmat)
     xbar <- mean(x)
     n <- length(x)
@@ -80,10 +80,10 @@ test_that("test single observation", {
   tstat <- function(dmat) {
     sum(clamp_data(dmat))
   }
-  st_calc <- function(dmat) {
+  st_f <- function(dmat) {
     tstat(dmat)
   }
-  lik_smpl <- function(theta) {
+  lik_f <- function(theta) {
     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
   }
   gen_priv <- function(epsilon) {
@@ -100,10 +100,10 @@ test_that("test single observation", {
   y <- sum(clamp_data(y))
   sdp <- y + extraDistr::rlaplace(1, sigma = 1/epsilon)
 
-  dmod <- new_privacy(post_smpl = post_smpl,
-                      lik_smpl = lik_smpl,
-                      ll_priv_mech = gen_priv(epsilon),
-                      st_calc = st_calc,
+  dmod <- new_privacy(post_f = post_f,
+                      lik_f = lik_f,
+                      priv_f = gen_priv(epsilon),
+                      st_f = st_f,
                       npar = 1)
 
   tmp <- dapper_sample(dmod,

@@ -1,36 +1,38 @@
 #' Creates data model
 #'
-#' @param post_smpl A function that draws posterior samples given the confidential data.
+#' @param post_f An R function that draws posterior samples given the confidential data.
 #' @param lik_smpl The sampling model.
-#' @param ll_priv_mech The log likelihood of the privacy mechanism modulo an additive constant.
-#' @param st_calc calculate statistic to be released.
+#' @param priv_f The log likelihood of the privacy mechanism modulo an additive constant.
+#' @param st_f calculate statistic to be released.
+#' @param add A logical argument. TRUE if st_f satisfies the record additivity assumption and FALSE otherwise.
 #' @param npar Number of parameters in model.
+#' @param varnames An optional character vector of parameter names. used to label summary outputs.
 #'
 #' @return A data model of class privacy. Is a S3 object.
 #' @export
 #'
-new_privacy <- function(post_smpl = NULL,
-                        lik_smpl = NULL,
-                        ll_priv_mech = NULL,
-                        st_calc = NULL,
-                        add = FALSE,
-                        npar = NULL,
+new_privacy <- function(post_f   = NULL,
+                        lik_f    = NULL,
+                        priv_f   = NULL,
+                        st_f     = NULL,
+                        add      = FALSE,
+                        npar     = NULL,
                         varnames = NULL)
 {
-  checkmate::assert_function(post_smpl)
-  checkmate::assert_function(lik_smpl)
-  checkmate::assert_function(ll_priv_mech)
-  checkmate::assert_function(st_calc)
+  checkmate::assert_function(post_f)
+  checkmate::assert_function(lik_f)
+  checkmate::assert_function(priv_f)
+  checkmate::assert_function(st_f)
   checkmate::assert_logical(add)
-  if(!is.null(st_calc)) checkmate::assert_function(st_calc)
+  if(!is.null(st_f)) checkmate::assert_function(st_f)
   checkmate::assert_int(npar)
 
-  plist <- list(post_smpl = post_smpl,
-                  lik_smpl = lik_smpl,
-                  ll_priv_mech = ll_priv_mech,
-                  st_calc = st_calc,
-                  add = add,
-                  npar = npar,
-                  varnames = varnames)
+  plist <- list(post_f   = post_f,
+                lik_f    = lik_f,
+                priv_f   = priv_f,
+                st_f     = st_f,
+                add      = add,
+                npar     = npar,
+                varnames = varnames)
   structure(plist, class = "privacy")
 }

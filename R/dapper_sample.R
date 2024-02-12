@@ -39,10 +39,10 @@
 #' priv_mech <- function(sdp, zt) {
 #'   sum(dnorm(sdp - zt, 0, 1/eps, TRUE))
 #' }
-#' dmod <- new_privacy(post_smpl = post_smpl,
-#'   lik_smpl = lik_smpl,
-#'   ll_priv_mech = priv_mech,
-#'   st_calc = st_calc,
+#' dmod <- new_privacy(post_f = post_smpl,
+#'   lik_f = lik_smpl,
+#'   priv_f = priv_mech,
+#'   st_f = st_calc,
 #'   add = FALSE,
 #'   npar = 1)
 #'
@@ -77,8 +77,6 @@ dapper_sample <- function(data_model,
 }
 
 
-
-
 #' single chain sample
 #'
 #' @export
@@ -92,25 +90,25 @@ dapper_chain <- function(data_model,
   checkmate::qassert(niter, "X?(0,)")
   checkmate::assert_class(data_model, "privacy")
 
-  post_smpl    <- data_model$post_smpl
-  lik_smpl     <- data_model$lik_smpl
-  ll_priv_mech <- data_model$ll_priv_mech
-  st_calc      <- data_model$st_calc
-  npar         <- data_model$npar
+  post_f <- data_model$post_f
+  lik_f  <- data_model$lik_f
+  priv_f <- data_model$priv_f
+  st_f   <- data_model$st_f
+  npar   <- data_model$npar
 
   accept_rate <- numeric(niter)
   theta_clist <- list()
-  dmat        <- lik_smpl(init_par)
+  dmat        <- lik_f(init_par)
   theta_mat   <- matrix(0, nrow = niter, ncol = npar)
   theta       <- init_par
-  st          <- st_calc(dmat)
+  st          <- st_f(dmat)
   nobs        <- nrow(dmat)
 
   for (i in 1:niter) {
     counter        <- 0
     theta_mat[i, ] <- theta
-    theta          <- post_smpl(dmat, theta)
-    smat           <- lik_smpl(theta)
+    theta          <- post_f(dmat, theta)
+    smat           <- lik_f(theta)
     for (j in 1:nobs) {
       xs <- smat[j, ]
       xo <- dmat[j, ]
@@ -118,12 +116,12 @@ dapper_chain <- function(data_model,
       if (!data_model$add) {
         nmat      <- dmat
         nmat[j, ] <- xs
-        sn        <- st_calc(nmat)
+        sn        <- st_f(nmat)
       } else {
         #convert xo,xs back to matrices
-        sn <- st - st_calc(t(xo)) + st_calc(t(xs))
+        sn <- st - st_f(t(xo)) + st_f(t(xs))
       }
-      a <- exp(ll_priv_mech(sdp, sn) - ll_priv_mech(sdp, st))
+      a <- exp(priv_f(sdp, sn) - priv_f(sdp, st))
       if (stats::runif(1) < min(a, 1)) {
         counter    <- counter + 1
         dmat[j, ]  <- xs
