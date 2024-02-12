@@ -60,10 +60,10 @@ st_calc <- function(dmat) {
 priv_mech <- function(sdp, zt) {
   sum(dnorm(sdp - zt, 0, 1/eps, TRUE))
 }
-dmod <- new_privacy(post_smpl = post_smpl,
-  lik_smpl = lik_smpl,
-  ll_priv_mech = priv_mech,
-  st_calc = st_calc,
+dmod <- new_privacy(post_f = post_smpl,
+  latent_f = lik_smpl,
+  priv_f = priv_mech,
+  st_f = st_calc,
   add = FALSE,
   npar = 1)
 

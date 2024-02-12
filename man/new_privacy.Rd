@@ -5,25 +5,29 @@
 \title{Creates data model}
 \usage{
 new_privacy(
-  post_smpl = NULL,
-  lik_smpl = NULL,
-  ll_priv_mech = NULL,
-  st_calc = NULL,
+  post_f = NULL,
+  latent_f = NULL,
+  priv_f = NULL,
+  st_f = NULL,
   add = FALSE,
   npar = NULL,
   varnames = NULL
 )
 }
 \arguments{
-\item{post_smpl}{A function that draws posterior samples given the confidential data.}
+\item{post_f}{An R function that draws posterior samples given the confidential data.}
 
-\item{lik_smpl}{The sampling model.}
+\item{latent_f}{The latent data sampling model.}
 
-\item{ll_priv_mech}{The log likelihood of the privacy mechanism modulo an additive constant.}
+\item{priv_f}{The log likelihood of the privacy mechanism.}
 
-\item{st_calc}{calculate statistic to be released.}
+\item{st_f}{calculate statistic to be released.}
+
+\item{add}{A logical argument. TRUE if st_f satisfies the record additivity assumption and FALSE otherwise.}
 
 \item{npar}{Number of parameters in model.}
+
+\item{varnames}{An optional character vector of parameter names. used to label summary outputs.}
 }
 \value{
 A data model of class privacy. Is a S3 object.
