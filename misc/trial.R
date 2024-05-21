@@ -5,13 +5,12 @@ post_f <- function(dmat, theta) {
 }
 
 latent_f <- function(theta) {
-  t(rbinom(100, 1, theta))
+  as.matrix(rbinom(100, 1, theta), ncol = 1)
 }
 
-st_f <- function(i, dmat) {
-  t1 <- c(dmat)
+st_f <- function(i, xi, sdp) {
   x    <- rep(0, 100)
-  x[i] <- t1[i]
+  x[i] <- xi
   x
 }
 
@@ -40,3 +39,12 @@ out <- dapper_sample(dmod,
                      sdp = x_sdp,
                      init_par = .8,
                      niter = 5000)
+
+dapper_chain(dmod,
+              sdp = x_sdp,
+              init_par = .8,
+              niter = 5000)
+
+dmat <- latent_f(.25)
+st_f(1, dmat)
+reduce(lapply(1:nrow(dmat), function(i) st_f(i, dmat)), "+")
