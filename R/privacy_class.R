@@ -15,7 +15,6 @@ new_privacy <- function(post_f   = NULL,
                         latent_f = NULL,
                         priv_f   = NULL,
                         st_f     = NULL,
-                        add      = FALSE,
                         npar     = NULL,
                         varnames = NULL)
 {
@@ -23,7 +22,6 @@ new_privacy <- function(post_f   = NULL,
   checkmate::assert_function(latent_f)
   checkmate::assert_function(priv_f)
   checkmate::assert_function(st_f)
-  checkmate::assert_logical(add)
   if(!is.null(st_f)) checkmate::assert_function(st_f)
   checkmate::assert_int(npar)
 
@@ -31,7 +29,6 @@ new_privacy <- function(post_f   = NULL,
                 latent_f = latent_f,
                 priv_f   = priv_f,
                 st_f     = st_f,
-                add      = add,
                 npar     = npar,
                 varnames = varnames)
   structure(plist, class = "privacy")
