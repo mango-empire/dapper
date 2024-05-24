@@ -89,7 +89,6 @@ dapper_chain <- function(data_model,
   #check inputs
   checkmate::qassert(niter, "X?(0,)")
   checkmate::assert_class(data_model, "privacy")
-  browser()
   post_f    <- data_model$post_f
   latent_f  <- data_model$latent_f
   priv_f    <- data_model$priv_f
@@ -109,13 +108,13 @@ dapper_chain <- function(data_model,
     theta_mat[i, ] <- theta
     theta          <- post_f(dmat, theta)
     smat           <- latent_f(theta)
+
     for (j in 1:nobs) {
       xs <- smat[j, ]
       xo <- dmat[j, ]
       sn <- NULL
 
-      #convert xo,xs back to matrices
-      sn <- st - st_f(j, t(xo), sdp) + st_f(j, t(xs), sdp)
+      sn <- st - st_f(j, xo, sdp) + st_f(j, xs, sdp)
 
       a <- exp(priv_f(sdp, sn) - priv_f(sdp, st))
       if (stats::runif(1) < min(a, 1)) {
@@ -127,10 +126,12 @@ dapper_chain <- function(data_model,
     accept_rate[i] <- counter / nobs
     if (i %% 100 == 0) prg_bar()
   }
+
   if (warmup > 0) {
     theta_mat <- theta_mat[-c(1:warmup), , drop = FALSE]
     accept_rate <- accept_rate[-c(1:warmup)]
   }
+
   list(sample = theta_mat, accept_rate = accept_rate)
 }
 
