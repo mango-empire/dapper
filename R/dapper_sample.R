@@ -61,8 +61,8 @@ dapper_sample <- function(data_model,
   checkmate::qassert(chains, "X?(0,)")
   if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
 
-  pb_size <- floor(niter / 100)
-  p <- progressr::progressor(pb_size * chains)
+  #pb_size <- floor(niter / 100)
+  p <- progressr::progressor(niter * chains)
   fout <- furrr::future_map(rep(niter, chains), dapper_chain,
                             data_model = data_model,
                             sdp = sdp,
@@ -89,7 +89,6 @@ dapper_chain <- function(data_model,
   #check inputs
   checkmate::qassert(niter, "X?(0,)")
   checkmate::assert_class(data_model, "privacy")
-
   post_f    <- data_model$post_f
   latent_f  <- data_model$latent_f
   priv_f    <- data_model$priv_f
@@ -101,7 +100,7 @@ dapper_chain <- function(data_model,
   dmat        <- latent_f(init_par)
   theta_mat   <- matrix(0, nrow = niter, ncol = npar)
   theta       <- init_par
-  st          <- st_f(dmat)
+  st          <- apply(sapply(1:nrow(dmat), function(i) st_f(i, dmat[i,], sdp)), 1, sum)
   nobs        <- nrow(dmat)
 
   for (i in 1:niter) {
@@ -113,28 +112,25 @@ dapper_chain <- function(data_model,
       xs <- smat[j, ]
       xo <- dmat[j, ]
       sn <- NULL
-      if (!data_model$add) {
-        nmat      <- dmat
-        nmat[j, ] <- xs
-        sn        <- st_f(nmat)
-      } else {
-        #convert xo,xs back to matrices
-        sn <- st - st_f(t(xo)) + st_f(t(xs))
-      }
-      a <- exp(priv_f(sdp, sn) - priv_f(sdp, st))
-      if (stats::runif(1) < min(a, 1)) {
+
+      sn <- st - st_f(j, xo, sdp) + st_f(j, xs, sdp)
+
+      a <- priv_f(sdp, sn) - priv_f(sdp, st)
+      if (log(stats::runif(1)) < a) {
         counter    <- counter + 1
         dmat[j, ]  <- xs
         st         <- sn
       }
     }
     accept_rate[i] <- counter / nobs
-    if (i %% 100 == 0) prg_bar()
+    if (!is.null(prg_bar)) prg_bar(message = sprintf("Iteration %g", i))
   }
+
   if (warmup > 0) {
     theta_mat <- theta_mat[-c(1:warmup), , drop = FALSE]
     accept_rate <- accept_rate[-c(1:warmup)]
   }
+
   list(sample = theta_mat, accept_rate = accept_rate)
 }
 
