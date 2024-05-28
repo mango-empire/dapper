@@ -61,8 +61,8 @@ dapper_sample <- function(data_model,
   checkmate::qassert(chains, "X?(0,)")
   if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
 
-  pb_size <- floor(niter / 100)
-  p <- progressr::progressor(pb_size * chains)
+  #pb_size <- floor(niter / 100)
+  p <- progressr::progressor(niter * chains)
   fout <- furrr::future_map(rep(niter, chains), dapper_chain,
                             data_model = data_model,
                             sdp = sdp,
@@ -108,7 +108,6 @@ dapper_chain <- function(data_model,
     theta_mat[i, ] <- theta
     theta          <- post_f(dmat, theta)
     smat           <- latent_f(theta)
-
     for (j in 1:nobs) {
       xs <- smat[j, ]
       xo <- dmat[j, ]
@@ -116,15 +115,15 @@ dapper_chain <- function(data_model,
 
       sn <- st - st_f(j, xo, sdp) + st_f(j, xs, sdp)
 
-      a <- exp(priv_f(sdp, sn) - priv_f(sdp, st))
-      if (stats::runif(1) < min(a, 1)) {
+      a <- priv_f(sdp, sn) - priv_f(sdp, st)
+      if (log(stats::runif(1)) < a) {
         counter    <- counter + 1
         dmat[j, ]  <- xs
         st         <- sn
       }
     }
     accept_rate[i] <- counter / nobs
-    if (i %% 100 == 0) prg_bar()
+    if (!is.null(prg_bar)) prg_bar(message = sprintf("Iteration %g", i))
   }
 
   if (warmup > 0) {
