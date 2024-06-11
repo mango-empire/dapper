@@ -114,8 +114,8 @@ dapper_chain <- function(data_model,
       sn <- NULL
 
       sn <- st - st_f(j, xo, sdp) + st_f(j, xs, sdp)
-
       a <- priv_f(sdp, sn) - priv_f(sdp, st)
+
       if (log(stats::runif(1)) < a) {
         counter    <- counter + 1
         dmat[j, ]  <- xs

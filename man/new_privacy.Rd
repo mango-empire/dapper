@@ -9,7 +9,6 @@ new_privacy(
   latent_f = NULL,
   priv_f = NULL,
   st_f = NULL,
-  add = FALSE,
   npar = NULL,
   varnames = NULL
 )
@@ -23,11 +22,11 @@ new_privacy(
 
 \item{st_f}{calculate statistic to be released.}
 
-\item{add}{A logical argument. TRUE if st_f satisfies the record additivity assumption and FALSE otherwise.}
-
 \item{npar}{Number of parameters in model.}
 
 \item{varnames}{An optional character vector of parameter names. used to label summary outputs.}
+
+\item{add}{A logical argument. TRUE if st_f satisfies the record additivity assumption and FALSE otherwise.}
 }
 \value{
 A data model of class privacy. Is a S3 object.
