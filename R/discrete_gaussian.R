@@ -1,12 +1,16 @@
 #' The Discrete Gaussian Distribution
 #'
 #' @param x vector of quantiles.
+#' @param n number of random deviates.
 #' @param mu location parameter
 #' @param sigma scale parameter
 #' @param log logical; if TRUE, probabilities are given as log(p).
 #'
 #' @return dnorm gives the probability mass function and rdnorm
 #' generates random deviates.
+#'
+#' @name DiscreteGuassian
+#' @aliases DiscreteGuassian
 #' @export
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     si <- 10 * min(10, sigma)
@@ -18,6 +22,9 @@ ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
       t1 / sum(t2)
     }
 }
+
+#' @rdname DiscreteGuassian
+#' @export
 
 rdnorm <- function(n, mu = 0, sigma = 1) {
     t <- floor(sigma) + 1

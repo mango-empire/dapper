@@ -1,12 +1,17 @@
 #' Discrete Laplace Distribution
 #'
 #' @param x a vector of quantiles.
+#' @param n number of random deviates.
 #' @param scale the scale parameter.
 #' @param log logical; if TRUE, probabilities are given as log(p).
 #'
 #' @return dnorm gives the probability mass function and rdnorm
 #' generates random deviates.
+#'
+#' @name DiscreteLaplace
+#'
 #' @export
+
 ddlaplace <- function(x, scale = 1, log = FALSE) {
     s  <- scale
     t1 <- log(exp(1/s) - 1) - log(exp(1/s) + 1) - abs(x)/s
@@ -16,6 +21,9 @@ ddlaplace <- function(x, scale = 1, log = FALSE) {
         exp(t1)
     }
 }
+
+#' @rdname DiscreteLaplace
+#' @export
 
 rdlaplace <- function(n, scale = 1) {
     t <- scale
