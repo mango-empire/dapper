@@ -12,14 +12,36 @@
 #' @name DiscreteGuassian
 #' @aliases DiscreteGuassian
 #' @export
+#'
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
-    si <- 10 * min(10, sigma)
     t1 <- exp(-(x - mu)^2 / (2 * sigma^2))
-    t2 <- sapply(-si:si, function(s) exp(-(s - mu)^2 / (2 * sigma^2)))
+    t2 <- ddnorm_constant(mu, sigma)
     if(log) {
-      log (t1 / sum (t2))
+      log (t1) - log (t2)
     } else {
-      t1 / sum(t2)
+      t1 / t2
+    }
+}
+
+ddnorm_constant <- function(mu, sigma) {
+    fsum <- NULL
+    psum <- NULL
+    if(sigma^2 <= 1) {
+        fsum <- 0
+        t1 <- sum(sapply(1:1000, function(s) exp(-(s - mu)^2 / (2 * sigma^2))))
+        fsum <- 2 * t1 + 1
+    } else if(sigma^2 * 100 >= 1) {
+        psum <- 0
+        t2 <- sum(sapply(1:1000, function(s) exp(-pi^2 * sigma^2 * 2 * s^2)))
+        psum <- sqrt(2 * pi * sigma^2) * (1 + 2 * t2)
+    }
+
+    if(is.null(fsum)) {
+        psum
+    } else if(is.null(psum)) {
+        fsum
+    } else {
+        (psum + fsum) / 2
     }
 }
 
