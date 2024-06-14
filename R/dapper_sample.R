@@ -100,7 +100,7 @@ dapper_chain <- function(data_model,
   dmat        <- latent_f(init_par)
   theta_mat   <- matrix(0, nrow = niter, ncol = npar)
   theta       <- init_par
-  st          <- apply(sapply(1:nrow(dmat), function(i) st_f(i, dmat[i,], sdp)), 1, sum)
+  st          <- Reduce("+", lapply(1:nrow(dmat), function(i) st_f(dmat[i,], sdp, i)))
   nobs        <- nrow(dmat)
 
   for (i in 1:niter) {
@@ -113,9 +113,8 @@ dapper_chain <- function(data_model,
       xo <- dmat[j, ]
       sn <- NULL
 
-      sn <- st - st_f(j, xo, sdp) + st_f(j, xs, sdp)
+      sn <- st - st_f(xo, sdp, j) + st_f(xs, sdp, j)
       a <- priv_f(sdp, sn) - priv_f(sdp, st)
-
       if (log(stats::runif(1)) < a) {
         counter    <- counter + 1
         dmat[j, ]  <- xs
