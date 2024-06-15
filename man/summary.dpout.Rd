@@ -4,10 +4,12 @@
 \alias{summary.dpout}
 \title{Summarise dpout object.}
 \usage{
-\method{summary}{dpout}(object)
+\method{summary}{dpout}(object, ...)
 }
 \arguments{
-\item{dpout}{object}
+\item{object}{dp_out object}
+
+\item{...}{Optional arguments to summarise_draws.}
 }
 \value{
 summary table

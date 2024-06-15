@@ -1,10 +1,10 @@
 #' Creates dpout object.
 #'
 #' @param theta parameter
+#' @param accept_mat acceptance matrix.
+#' @param varnames variable names.
 #'
 #' @return a simulation object
-#'
-#' @examples
 new_dpout <- function(theta, accept_mat, varnames = NULL) {
   dp_obj <- do.call(rbind, theta)
   nr <- length(theta) * nrow(theta[[1]])

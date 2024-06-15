@@ -1,10 +1,11 @@
 #' Generate samples from the private posterior.
 #'
 #' @param data_model A data model represented by a privacy class object.
-#' @param sdp The observed privatized data.
+#' @param sdp The observed privatized data. Must be a vector or matrix.
 #' @param init_par Initial starting point of the chain.
 #' @param niter Number of draws.
 #' @param warmup Number of iterations to discard as warmup. Default is half of niter.
+#' @param chains Number of MCMC chains to run. Can be done in parallel or sequentially.
 #'
 #' @return A dpout object which contains:
 #' \item{accept_prob}{Acceptance probabilities}
@@ -20,7 +21,7 @@
 #' y <- rnorm(n, mean = -2, sd = 1)
 #' sdp <- mean(y) + rnorm(1, 0, 1/eps)
 #'
-#' post_smpl <- function(dmat, theta) {
+#' post_f <- function(dmat, theta) {
 #'     x <- c(dmat)
 #'     xbar <- mean(x)
 #'     n <- length(x)
@@ -30,20 +31,19 @@
 #'     ps_m <- ps_s2 * ((1/pr_s2)*pr_m + n * xbar)
 #'     rnorm(1, mean = ps_m, sd = sqrt(ps_s2))
 #' }
-#' lik_smpl <- function(theta) {
+#' latent_f <- function(theta) {
 #'     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
 #' }
-#' st_calc <- function(dmat) {
-#'     mean(dmat)
+#' st_f <- function(xi, sdp, i) {
+#'     mean(xi)
 #' }
-#' priv_mech <- function(sdp, zt) {
-#'   sum(dnorm(sdp - zt, 0, 1/eps, TRUE))
+#' priv_f <- function(sdp, tx) {
+#'   sum(dnorm(sdp - tx, 0, 1/eps, TRUE))
 #' }
-#' dmod <- new_privacy(post_f = post_smpl,
-#'   latent_f = lik_smpl,
-#'   priv_f = priv_mech,
-#'   st_f = st_calc,
-#'   add = FALSE,
+#' dmod <- new_privacy(post_f = post_f,
+#'   latent_f = latent_f,
+#'   priv_f = priv_f,
+#'   st_f = st_f,
 #'   npar = 1)
 #'
 #' out <- dapper_sample(dmod,
@@ -60,7 +60,6 @@ dapper_sample <- function(data_model,
   #check inputs
   checkmate::qassert(chains, "X?(0,)")
   if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
-
   #pb_size <- floor(niter / 100)
   p <- progressr::progressor(niter * chains)
   fout <- furrr::future_map(rep(niter, chains), dapper_chain,
@@ -76,10 +75,6 @@ dapper_sample <- function(data_model,
   new_dpout(theta_clist, accept_mat, data_model$varnames)
 }
 
-
-#' single chain sample
-#'
-#' @export
 dapper_chain <- function(data_model,
                       sdp,
                       init_par,
@@ -137,22 +132,23 @@ dapper_chain <- function(data_model,
 
 #' Summarise dpout object.
 #'
-#' @param dpout object
+#' @param object dp_out object
+#' @param ... Optional arguments to summarise_draws.
 #'
 #' @return summary table
 #' @export
-summary.dpout <- function(object) {
-  posterior::summarise_draws(object$chain)
+summary.dpout <- function(object, ...) {
+  posterior::summarise_draws(object$chain, ...)
 }
 
 #' Summarise dpout object.
 #'
-#' @param dpout object
-#'
+#' @param x dp_out object.
+#' @param ... Optional arguments to mcmc_trace.
 #' @return trace plots
 #' @export
-plot.dpout <- function(object) {
-  bayesplot::mcmc_trace(object$chain)
+plot.dpout <- function(x, ...) {
+  bayesplot::mcmc_trace(x$chain, ...)
 }
 
 

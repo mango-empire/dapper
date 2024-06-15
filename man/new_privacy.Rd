@@ -14,9 +14,9 @@ new_privacy(
 )
 }
 \arguments{
-\item{post_f}{An R function that draws posterior samples given the confidential data.}
+\item{post_f}{A function that draws posterior samples given the confidential data.}
 
-\item{latent_f}{The latent data sampling model.}
+\item{latent_f}{A function that represents the latent data sampling model.}
 
 \item{priv_f}{The log likelihood of the privacy mechanism.}
 
@@ -25,8 +25,6 @@ new_privacy(
 \item{npar}{Number of parameters in model.}
 
 \item{varnames}{An optional character vector of parameter names. used to label summary outputs.}
-
-\item{add}{A logical argument. TRUE if st_f satisfies the record additivity assumption and FALSE otherwise.}
 }
 \value{
 A data model of class privacy. Is a S3 object.

@@ -32,12 +32,12 @@ rdlaplace <- function(n, scale = 1) {
       while(TRUE) {
           while(TRUE) {
             u <- sample(0:(t-1), 1)
-            d <- rbinom(1, 1, exp(-u/t))
+            d <- stats::rbinom(1, 1, exp(-u/t))
             if(d) break
           }
           v <- 0
           while(TRUE) {
-            a <- rbinom(1, 1, exp(-1))
+            a <- stats::rbinom(1, 1, exp(-1))
             if(!a) {
               break
             } else {
@@ -45,7 +45,7 @@ rdlaplace <- function(n, scale = 1) {
             }
           }
           y <- u + t * v
-          b <- rbinom(1, 1, 1/2)
+          b <- stats::rbinom(1, 1, 1/2)
           if(b == 0 | y != 0) {
             smp[i] <- (1 - 2 * b) * y
             break

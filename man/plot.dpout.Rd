@@ -4,10 +4,12 @@
 \alias{plot.dpout}
 \title{Summarise dpout object.}
 \usage{
-\method{plot}{dpout}(object)
+\method{plot}{dpout}(x, ...)
 }
 \arguments{
-\item{dpout}{object}
+\item{x}{dp_out object.}
+
+\item{...}{Optional arguments to mcmc_trace.}
 }
 \value{
 trace plots

@@ -1,9 +1,8 @@
 Package: dapper
-Title: What the Package Does (One Line, Title Case)
+Title: Data Augmentation for Private Posterior Estimation
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Kevin", "Eng", , "kevine1221@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -15,16 +14,10 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
-    base,
+    bayesplot,
     checkmate,
-    DiscreteLaplace,
-    extraDistr,
-    foreach,
     furrr,
-    future.apply,
-    graphics,
+    memoise,
     posterior,
     progressr,
-    stats,
-    utils,
-    VGAM
+    stats

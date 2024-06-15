@@ -8,6 +8,10 @@ new_dpout(theta, accept_mat, varnames = NULL)
 }
 \arguments{
 \item{theta}{parameter}
+
+\item{accept_mat}{acceptance matrix.}
+
+\item{varnames}{variable names.}
 }
 \value{
 a simulation object

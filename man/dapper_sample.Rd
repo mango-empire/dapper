@@ -16,13 +16,15 @@ dapper_sample(
 \arguments{
 \item{data_model}{A data model represented by a privacy class object.}
 
-\item{sdp}{The observed privatized data.}
+\item{sdp}{The observed privatized data. Must be a vector or matrix.}
 
 \item{init_par}{Initial starting point of the chain.}
 
 \item{niter}{Number of draws.}
 
 \item{warmup}{Number of iterations to discard as warmup. Default is half of niter.}
+
+\item{chains}{Number of MCMC chains to run. Can be done in parallel or sequentially.}
 }
 \value{
 A dpout object which contains:
@@ -41,7 +43,7 @@ eps <- 3
 y <- rnorm(n, mean = -2, sd = 1)
 sdp <- mean(y) + rnorm(1, 0, 1/eps)
 
-post_smpl <- function(dmat, theta) {
+post_f <- function(dmat, theta) {
     x <- c(dmat)
     xbar <- mean(x)
     n <- length(x)
@@ -51,20 +53,19 @@ post_smpl <- function(dmat, theta) {
     ps_m <- ps_s2 * ((1/pr_s2)*pr_m + n * xbar)
     rnorm(1, mean = ps_m, sd = sqrt(ps_s2))
 }
-lik_smpl <- function(theta) {
+latent_f <- function(theta) {
     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
 }
-st_calc <- function(dmat) {
-    mean(dmat)
+st_f <- function(xi, sdp, i) {
+    mean(xi)
 }
-priv_mech <- function(sdp, zt) {
-  sum(dnorm(sdp - zt, 0, 1/eps, TRUE))
+priv_f <- function(sdp, tx) {
+  sum(dnorm(sdp - tx, 0, 1/eps, TRUE))
 }
-dmod <- new_privacy(post_f = post_smpl,
-  latent_f = lik_smpl,
-  priv_f = priv_mech,
-  st_f = st_calc,
-  add = FALSE,
+dmod <- new_privacy(post_f = post_f,
+  latent_f = latent_f,
+  priv_f = priv_f,
+  st_f = st_f,
   npar = 1)
 
 out <- dapper_sample(dmod,
