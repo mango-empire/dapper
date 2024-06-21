@@ -9,10 +9,10 @@
 \arguments{
 \item{object}{dp_out object}
 
-\item{...}{Optional arguments to summarise_draws.}
+\item{...}{optional arguments to summarise_draws.}
 }
 \value{
-summary table
+a summary table of MCMC statistics.
 }
 \description{
 Summarise dpout object.

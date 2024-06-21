@@ -2,18 +2,18 @@
 % Please edit documentation in R/dapper_sample.R
 \name{plot.dpout}
 \alias{plot.dpout}
-\title{Summarise dpout object.}
+\title{Plot dpout object.}
 \usage{
 \method{plot}{dpout}(x, ...)
 }
 \arguments{
 \item{x}{dp_out object.}
 
-\item{...}{Optional arguments to mcmc_trace.}
+\item{...}{optional arguments to mcmc_trace.}
 }
 \value{
-trace plots
+trace plots.
 }
 \description{
-Summarise dpout object.
+Plot dpout object.
 }

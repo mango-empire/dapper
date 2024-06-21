@@ -14,22 +14,22 @@ dapper_sample(
 )
 }
 \arguments{
-\item{data_model}{A data model represented by a privacy class object.}
+\item{data_model}{a data model represented by a privacy class object.}
 
-\item{sdp}{The observed privatized data. Must be a vector or matrix.}
+\item{sdp}{the observed privatized data. Must be a vector or matrix.}
 
-\item{init_par}{Initial starting point of the chain.}
+\item{init_par}{initial starting point of the chain.}
 
-\item{niter}{Number of draws.}
+\item{niter}{number of draws.}
 
-\item{warmup}{Number of iterations to discard as warmup. Default is half of niter.}
+\item{warmup}{number of iterations to discard as warmup. Default is half of niter.}
 
-\item{chains}{Number of MCMC chains to run. Can be done in parallel or sequentially.}
+\item{chains}{number of MCMC chains to run. Can be done in parallel or sequentially.}
 }
 \value{
 A dpout object which contains:
-\item{accept_prob}{Acceptance probabilities}
-\item{chain}{Samples from the private posterior}
+\item{accept_prob}{acceptance probabilities.}
+\item{chain}{samples from the private posterior.}
 }
 \description{
 Generate samples from the private posterior.

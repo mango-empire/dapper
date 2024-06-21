@@ -8,8 +8,8 @@
 #' @param chains number of MCMC chains to run. Can be done in parallel or sequentially.
 #'
 #' @return A dpout object which contains:
-#' \item{accept_prob}{Acceptance probabilities}
-#' \item{chain}{Samples from the private posterior}
+#' \item{accept_prob}{acceptance probabilities.}
+#' \item{chain}{samples from the private posterior.}
 #' @export
 #'
 #' @examples
