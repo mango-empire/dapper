@@ -32,6 +32,17 @@ Probability mass function
 P[X=x] = \dfrac{e^{1/t} - 1}{e^{1/t} + 1} e^{-|x|/t}.
 }
 }
+\examples{
+# mass function
+ddlaplace(0)
+
+# mass function is vectorized
+ddlaplace(0:10, scale = 5)
+
+# generate random samples
+rdlaplace(10)
+
+}
 \references{
 Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
 \emph{arXiv}. \url{https://doi.org/10.48550/ARXIV.2004.00010}

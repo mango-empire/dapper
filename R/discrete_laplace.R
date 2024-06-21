@@ -11,6 +11,16 @@
 #' P[X=x] = \dfrac{e^{1/t} - 1}{e^{1/t} + 1} e^{-|x|/t}.
 #' }
 #'
+#' @examples
+#' # mass function
+#' ddlaplace(0)
+#'
+#' # mass function is vectorized
+#' ddlaplace(0:10, scale = 5)
+#'
+#' # generate random samples
+#' rdlaplace(10)
+#'
 #' @references
 #' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
 #' \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2004.00010>
@@ -23,6 +33,11 @@
 #' @export
 
 ddlaplace <- function(x, scale = 1, log = FALSE) {
+    #check inputs
+    checkmate::assertNumeric(x)
+    checkmate::qassert(scale, "n1[0,)")
+    checkmate::qassert(log, "b1")
+
     s  <- scale
     t1 <- log(exp(1/s) - 1) - log(exp(1/s) + 1) - abs(x)/s
     if(log) {
@@ -36,6 +51,10 @@ ddlaplace <- function(x, scale = 1, log = FALSE) {
 #' @export
 
 rdlaplace <- function(n, scale = 1) {
+    #check inputs
+    checkmate::assertCount(n)
+    checkmate::qassert(scale, "n1[0,)")
+
     t <- scale
     smp <- numeric(n)
     for(i in 1:n) {

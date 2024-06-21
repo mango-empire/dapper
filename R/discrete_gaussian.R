@@ -13,6 +13,16 @@
 #' P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(x-\mu)^2/2\sigma^2}}.
 #' }
 #'
+#' @examples
+#' # mass function
+#' ddnorm(0)
+#'
+#' # mass function is also vectorized
+#' ddnorm(0:10, mu = 0, sigma = 5)
+#'
+#' # generate random samples
+#' rdnorm(10)
+#'
 #' @references
 #' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
 #' \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2004.00010>
@@ -24,6 +34,12 @@
 #' @aliases DiscreteGuassian
 #' @export
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
+    #check inputs
+    checkmate::assertNumeric(x)
+    checkmate::assertScalar(mu)
+    checkmate::qassert(sigma, "n1[0,)")
+    checkmate::qassert(log, "b1")
+
     t1 <- exp(-(x - mu)^2 / (2 * sigma^2))
     t2 <- ddnorm_constant(sigma)
     if(log) {
@@ -34,6 +50,9 @@ ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
 }
 
 ddnorm_constant <- function(sigma) {
+    #check input
+    checkmate::qassert(sigma, "n1[0,)")
+
     fsum <- NULL
     psum <- NULL
     if(sigma^2 <= 1) {
@@ -59,6 +78,11 @@ ddnorm_constant <- function(sigma) {
 #' @export
 
 rdnorm <- function(n, mu = 0, sigma = 1) {
+    #check inputs
+    checkmate::assertCount(n)
+    checkmate::assertScalar(mu)
+    checkmate::qassert(sigma, "n1[0,)")
+
     t <- floor(sigma) + 1
     smp <- numeric(n)
     for(i in 1:n) {

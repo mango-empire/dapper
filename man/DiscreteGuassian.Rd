@@ -34,6 +34,17 @@ Probability mass function
 P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(x-\mu)^2/2\sigma^2}}.
 }
 }
+\examples{
+# mass function
+ddnorm(0)
+
+# mass function is also vectorized
+ddnorm(0:10, mu = 0, sigma = 5)
+
+# generate random samples
+rdnorm(10)
+
+}
 \references{
 Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
 \emph{arXiv}. \url{https://doi.org/10.48550/ARXIV.2004.00010}
