@@ -13,18 +13,28 @@ rdnorm(n, mu = 0, sigma = 1)
 \arguments{
 \item{x}{vector of quantiles.}
 
-\item{mu}{location parameter}
+\item{mu}{location parameter.}
 
-\item{sigma}{scale parameter}
+\item{sigma}{scale parameter.}
 
 \item{log}{logical; if TRUE, probabilities are given as log(p).}
 
 \item{n}{number of random deviates.}
 }
 \value{
-dnorm gives the probability mass function and rdnorm
+ddnorm gives the probability mass function and rdnorm
 generates random deviates.
 }
 \description{
 The Discrete Gaussian Distribution
+}
+\details{
+Probability mass function
+\deqn{
+P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(x-\mu)^2/2\sigma^2}}.
+}
+}
+\references{
+Canonne, Clément L., Gautam Kamath, and Thomas Steinke. 2021. “The Discrete Gaussian for
+Differential Privacy.” https://arxiv.org/abs/2004.00010.
 }

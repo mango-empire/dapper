@@ -5,7 +5,17 @@
 #' @param scale the scale parameter.
 #' @param log logical; if TRUE, probabilities are given as log(p).
 #'
-#' @return dnorm gives the probability mass function and rdnorm
+#' @details
+#' Probability mass function
+#' \deqn{
+#' P[X=x] = \dfrac{e^{1/t} - 1}{e^{1/t} + 1} e^{-|x|/t}.
+#' }
+#'
+#' @references
+#' Canonne, Clément L., Gautam Kamath, and Thomas Steinke. 2021. “The Discrete Gaussian for
+#'  Differential Privacy.” https://arxiv.org/abs/2004.00010.
+#'
+#' @return ddlaplace gives the probability mass function and rdlaplace
 #' generates random deviates.
 #'
 #' @name DiscreteLaplace

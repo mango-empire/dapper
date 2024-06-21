@@ -20,9 +20,19 @@ rdlaplace(n, scale = 1)
 \item{n}{number of random deviates.}
 }
 \value{
-dnorm gives the probability mass function and rdnorm
+ddlaplace gives the probability mass function and rdlaplace
 generates random deviates.
 }
 \description{
 Discrete Laplace Distribution
+}
+\details{
+Probability mass function
+\deqn{
+P[X=x] = \dfrac{e^{1/t} - 1}{e^{1/t} + 1} e^{-|x|/t}.
+}
+}
+\references{
+Canonne, Clément L., Gautam Kamath, and Thomas Steinke. 2021. “The Discrete Gaussian for
+Differential Privacy.” https://arxiv.org/abs/2004.00010.
 }

@@ -2,11 +2,22 @@
 #'
 #' @param x vector of quantiles.
 #' @param n number of random deviates.
-#' @param mu location parameter
-#' @param sigma scale parameter
+#' @param mu location parameter.
+#' @param sigma scale parameter.
 #' @param log logical; if TRUE, probabilities are given as log(p).
 #'
-#' @return dnorm gives the probability mass function and rdnorm
+#' @details
+#'
+#' Probability mass function
+#' \deqn{
+#' P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(x-\mu)^2/2\sigma^2}}.
+#' }
+#'
+#' @references
+#' Canonne, Clément L., Gautam Kamath, and Thomas Steinke. 2021. “The Discrete Gaussian for
+#'  Differential Privacy.” https://arxiv.org/abs/2004.00010.
+#'
+#' @return ddnorm gives the probability mass function and rdnorm
 #' generates random deviates.
 #'
 #' @name DiscreteGuassian
