@@ -3,7 +3,7 @@
 #' @param x a vector of quantiles.
 #' @param n number of random deviates.
 #' @param scale the scale parameter.
-#' @param log logical; if TRUE, probabilities are given as log(p).
+#' @param log logical; if \code{TRUE}, probabilities are given as log(p).
 #'
 #' @details
 #' Probability mass function
@@ -12,8 +12,8 @@
 #' }
 #'
 #' @references
-#' Canonne, Clément L., Gautam Kamath, and Thomas Steinke. 2021. “The Discrete Gaussian for
-#'  Differential Privacy.” https://arxiv.org/abs/2004.00010.
+#' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
+#' \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2004.00010>
 #'
 #' @return ddlaplace gives the probability mass function and rdlaplace
 #' generates random deviates.

@@ -74,3 +74,7 @@ out <- dapper_sample(dmod,
                     niter = 500)
 summary(out)
 }
+\references{
+Ju, N., Awan, J. A., Gong, R., & Rao, V. A. (2022). Data Augmentation MCMC
+for Bayesian Inference from Privatized Data. \emph{arXiv}. \url{https://doi.org/10.48550/ARXIV.2206.00710}
+}

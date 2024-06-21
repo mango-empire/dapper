@@ -3,11 +3,39 @@
 #' @param post_f a function that draws posterior samples given the confidential data.
 #' @param latent_f a function that represents the latent data sampling model.
 #' @param priv_f a function that represents the log likelihood of the privacy mechanism.
-#' @param st_f a function that calculated the statistic to be released.
+#' @param st_f a function that calculates the statistic to be released.
 #' @param npar number of parameters in model.
 #' @param varnames an optional character vector of parameter names. Used to label summary outputs.
 #'
-#' @return A data model of class privacy. Is a S3 object.
+#' @details
+#' * `post_f` is a function which makes draws from the posterior sampler. It has
+#' the syntax `post_f(dmat, theta)`. Here `dmat` is an R matrix representing the confidential data.
+#' Note `dmat` must be a matrix even if there is only one dimension. Thus, `dmat` cannot
+#' be a vector for instance. This function can be constructed by wrapping MCMC samplers generated from other R packages
+#' (e.g. \CRANpkg{rstan}, \CRANpkg{fmcmc}, \CRANpkg{adaptMCMC}).
+#' If using this approach, it is recommended to avoid using packages
+#' with a large initialization overhead such as \CRANpkg{mcmc} since the sampler is reinitialized
+#' every loop iteration. In the case of \CRANpkg{mcmc},
+#' the Metropolis-Hastings loop is implemented in C so there is a significant initialization cost
+#' when calling from an R function. The `theta` argument is an R vector and its purpose is
+#' to serve as the initialization point for `post_f`.
+#'
+#' * `priv_f` is an R function that represents the log of the privacy mechanism density.
+#' This function has the form `priv_f(sdp, sx)` where `sdp` and `sx` are both either
+#' a R vector or matrix. The arguments must appear in the exact order with the same variables names as defined above.
+#' Finally, the return value of `priv_f` must be a real number.
+#'
+#' * `st_f` is an R function which calculates a summary statistic. It
+#' must be defined using the three arguments named `i`, `xi` and `sdp`
+#' in the stated order. The role of this function is to represent terms in the definition of record additivity.
+#' Here the type class for `i` is an integer,
+#' while `xi` is an R vector and `sdp` is an R vector or matrix.
+#'
+#' * `npar` is an integer value that represents the dimension of `theta`. It
+#' should output a vector of the same length as `post_f`.
+#' @md
+#'
+#' @return A S3 object of class \code{privacy}.
 #' @export
 #'
 new_privacy <- function(post_f   = NULL,

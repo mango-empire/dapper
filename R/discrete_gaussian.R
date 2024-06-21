@@ -4,7 +4,7 @@
 #' @param n number of random deviates.
 #' @param mu location parameter.
 #' @param sigma scale parameter.
-#' @param log logical; if TRUE, probabilities are given as log(p).
+#' @param log logical; if \code{TRUE}, probabilities are given as log(p).
 #'
 #' @details
 #'
@@ -14,8 +14,8 @@
 #' }
 #'
 #' @references
-#' Canonne, Clément L., Gautam Kamath, and Thomas Steinke. 2021. “The Discrete Gaussian for
-#'  Differential Privacy.” https://arxiv.org/abs/2004.00010.
+#' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
+#' \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2004.00010>
 #'
 #' @return ddnorm gives the probability mass function and rdnorm
 #' generates random deviates.
@@ -23,7 +23,6 @@
 #' @name DiscreteGuassian
 #' @aliases DiscreteGuassian
 #' @export
-#'
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     t1 <- exp(-(x - mu)^2 / (2 * sigma^2))
     t2 <- ddnorm_constant(sigma)

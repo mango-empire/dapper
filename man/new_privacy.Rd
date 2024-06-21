@@ -20,15 +20,41 @@ new_privacy(
 
 \item{priv_f}{a function that represents the log likelihood of the privacy mechanism.}
 
-\item{st_f}{a function that calculated the statistic to be released.}
+\item{st_f}{a function that calculates the statistic to be released.}
 
 \item{npar}{number of parameters in model.}
 
 \item{varnames}{an optional character vector of parameter names. Used to label summary outputs.}
 }
 \value{
-A data model of class privacy. Is a S3 object.
+A S3 object of class \code{privacy}.
 }
 \description{
 Creates data model
+}
+\details{
+\itemize{
+\item \code{post_f} is a function which makes draws from the posterior sampler. It has
+the syntax \code{post_f(dmat, theta)}. Here \code{dmat} is an R matrix representing the confidential data.
+Note \code{dmat} must be a matrix even if there is only one dimension. Thus, \code{dmat} cannot
+be a vector for instance. This function can be constructed by wrapping MCMC samplers generated from other R packages
+(e.g. \CRANpkg{rstan}, \CRANpkg{fmcmc}, \CRANpkg{adaptMCMC}).
+If using this approach, it is recommended to avoid using packages
+with a large initialization overhead such as \CRANpkg{mcmc} since the sampler is reinitialized
+every loop iteration. In the case of \CRANpkg{mcmc},
+the Metropolis-Hastings loop is implemented in C so there is a significant initialization cost
+when calling from an R function. The \code{theta} argument is an R vector and its purpose is
+to serve as the initialization point for \code{post_f}.
+\item \code{priv_f} is an R function that represents the log of the privacy mechanism density.
+This function has the form \code{priv_f(sdp, sx)} where \code{sdp} and \code{sx} are both either
+a R vector or matrix. The arguments must appear in the exact order with the same variables names as defined above.
+Finally, the return value of \code{priv_f} must be a real number.
+\item \code{st_f} is an R function which calculates a summary statistic. It
+must be defined using the three arguments named \code{i}, \code{xi} and \code{sdp}
+in the stated order. The role of this function is to represent terms in the definition of record additivity.
+Here the type class for \code{i} is an integer,
+while \code{xi} is an R vector and \code{sdp} is an R vector or matrix.
+\item \code{npar} is an integer value that represents the dimension of \code{theta}. It
+should output a vector of the same length as \code{post_f}.
+}
 }

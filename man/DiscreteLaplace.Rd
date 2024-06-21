@@ -15,7 +15,7 @@ rdlaplace(n, scale = 1)
 
 \item{scale}{the scale parameter.}
 
-\item{log}{logical; if TRUE, probabilities are given as log(p).}
+\item{log}{logical; if \code{TRUE}, probabilities are given as log(p).}
 
 \item{n}{number of random deviates.}
 }
@@ -33,6 +33,6 @@ P[X=x] = \dfrac{e^{1/t} - 1}{e^{1/t} + 1} e^{-|x|/t}.
 }
 }
 \references{
-Canonne, Clément L., Gautam Kamath, and Thomas Steinke. 2021. “The Discrete Gaussian for
-Differential Privacy.” https://arxiv.org/abs/2004.00010.
+Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
+\emph{arXiv}. \url{https://doi.org/10.48550/ARXIV.2004.00010}
 }

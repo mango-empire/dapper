@@ -3,7 +3,7 @@ Title: Data Augmentation for Private Posterior Estimation
 Version: 0.0.0.9000
 Authors@R: 
     person("Kevin", "Eng", , "kevine1221@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: This package provides a set of tools for analyzing privatized data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -12,6 +12,10 @@
 #' \item{chain}{samples from the private posterior.}
 #' @export
 #'
+#' @references
+#' Ju, N., Awan, J. A., Gong, R., & Rao, V. A. (2022). Data Augmentation MCMC
+#' for Bayesian Inference from Privatized Data. \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2206.00710>
+#'
 #' @examples
 #' #simulate confidential data
 #' #privacy mechanism adds gaussian noise to each observation.
