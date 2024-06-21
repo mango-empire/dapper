@@ -36,7 +36,7 @@ Generate samples from the private posterior.
 }
 \examples{
 #simulate confidential data
-#Privacy mechanism adds gaussian noise to each observation.
+#privacy mechanism adds gaussian noise to each observation.
 set.seed(1)
 n <- 100
 eps <- 3
