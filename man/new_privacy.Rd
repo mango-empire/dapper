@@ -14,17 +14,17 @@ new_privacy(
 )
 }
 \arguments{
-\item{post_f}{A function that draws posterior samples given the confidential data.}
+\item{post_f}{a function that draws posterior samples given the confidential data.}
 
-\item{latent_f}{A function that represents the latent data sampling model.}
+\item{latent_f}{a function that represents the latent data sampling model.}
 
-\item{priv_f}{The log likelihood of the privacy mechanism.}
+\item{priv_f}{a function that represents the log likelihood of the privacy mechanism.}
 
-\item{st_f}{calculate statistic to be released.}
+\item{st_f}{a function that calculated the statistic to be released.}
 
-\item{npar}{Number of parameters in model.}
+\item{npar}{number of parameters in model.}
 
-\item{varnames}{An optional character vector of parameter names. used to label summary outputs.}
+\item{varnames}{an optional character vector of parameter names. Used to label summary outputs.}
 }
 \value{
 A data model of class privacy. Is a S3 object.

@@ -1,11 +1,11 @@
 #' Creates data model
 #'
-#' @param post_f A function that draws posterior samples given the confidential data.
-#' @param latent_f A function that represents the latent data sampling model.
-#' @param priv_f The log likelihood of the privacy mechanism.
-#' @param st_f calculate statistic to be released.
-#' @param npar Number of parameters in model.
-#' @param varnames An optional character vector of parameter names. used to label summary outputs.
+#' @param post_f a function that draws posterior samples given the confidential data.
+#' @param latent_f a function that represents the latent data sampling model.
+#' @param priv_f a function that represents the log likelihood of the privacy mechanism.
+#' @param st_f a function that calculated the statistic to be released.
+#' @param npar number of parameters in model.
+#' @param varnames an optional character vector of parameter names. Used to label summary outputs.
 #'
 #' @return A data model of class privacy. Is a S3 object.
 #' @export

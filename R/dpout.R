@@ -1,6 +1,6 @@
 #' Creates dpout object.
 #'
-#' @param theta parameter
+#' @param theta parameter being estimated.
 #' @param accept_mat acceptance matrix.
 #' @param varnames variable names.
 #'

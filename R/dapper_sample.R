@@ -1,11 +1,11 @@
 #' Generate samples from the private posterior.
 #'
-#' @param data_model A data model represented by a privacy class object.
-#' @param sdp The observed privatized data. Must be a vector or matrix.
-#' @param init_par Initial starting point of the chain.
-#' @param niter Number of draws.
-#' @param warmup Number of iterations to discard as warmup. Default is half of niter.
-#' @param chains Number of MCMC chains to run. Can be done in parallel or sequentially.
+#' @param data_model a data model represented by a privacy class object.
+#' @param sdp the observed privatized data. Must be a vector or matrix.
+#' @param init_par initial starting point of the chain.
+#' @param niter number of draws.
+#' @param warmup number of iterations to discard as warmup. Default is half of niter.
+#' @param chains number of MCMC chains to run. Can be done in parallel or sequentially.
 #'
 #' @return A dpout object which contains:
 #' \item{accept_prob}{Acceptance probabilities}
@@ -133,19 +133,19 @@ dapper_chain <- function(data_model,
 #' Summarise dpout object.
 #'
 #' @param object dp_out object
-#' @param ... Optional arguments to summarise_draws.
+#' @param ... optional arguments to summarise_draws.
 #'
-#' @return summary table
+#' @return a summary table of MCMC statistics.
 #' @export
 summary.dpout <- function(object, ...) {
   posterior::summarise_draws(object$chain, ...)
 }
 
-#' Summarise dpout object.
+#' Plot dpout object.
 #'
 #' @param x dp_out object.
-#' @param ... Optional arguments to mcmc_trace.
-#' @return trace plots
+#' @param ... optional arguments to mcmc_trace.
+#' @return trace plots.
 #' @export
 plot.dpout <- function(x, ...) {
   bayesplot::mcmc_trace(x$chain, ...)

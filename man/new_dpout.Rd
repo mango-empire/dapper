@@ -7,7 +7,7 @@
 new_dpout(theta, accept_mat, varnames = NULL)
 }
 \arguments{
-\item{theta}{parameter}
+\item{theta}{parameter being estimated.}
 
 \item{accept_mat}{acceptance matrix.}
 
