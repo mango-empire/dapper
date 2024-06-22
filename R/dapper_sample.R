@@ -143,7 +143,7 @@ dapper_chain <- function(data_model,
 #' Summarise dpout object.
 #'
 #' @param object dp_out object
-#' @param ... optional arguments to summarise_draws.
+#' @param ... optional arguments to `summarise_draws()`.
 #'
 #' @return a summary table of MCMC statistics.
 #' @export
@@ -154,7 +154,7 @@ summary.dpout <- function(object, ...) {
 #' Plot dpout object.
 #'
 #' @param x dp_out object.
-#' @param ... optional arguments to mcmc_trace.
+#' @param ... optional arguments to `mcmc_trace()`.
 #' @return trace plots.
 #' @export
 plot.dpout <- function(x, ...) {

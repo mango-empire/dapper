@@ -9,7 +9,7 @@
 \arguments{
 \item{object}{dp_out object}
 
-\item{...}{optional arguments to summarise_draws.}
+\item{...}{optional arguments to \code{summarise_draws()}.}
 }
 \value{
 a summary table of MCMC statistics.

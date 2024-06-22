@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{dp_out object.}
 
-\item{...}{optional arguments to mcmc_trace.}
+\item{...}{optional arguments to \code{mcmc_trace()}.}
 }
 \value{
 trace plots.
