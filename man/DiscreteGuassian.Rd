@@ -26,7 +26,8 @@ ddnorm gives the probability mass function and rdnorm
 generates random deviates.
 }
 \description{
-The Discrete Gaussian Distribution
+The probability mass function and random number generator for the
+discrete Gaussian distribution with mean \code{mu} and scale parameter \code{sigma}.
 }
 \details{
 Probability mass function

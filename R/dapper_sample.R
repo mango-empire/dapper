@@ -1,4 +1,8 @@
-#' Generate samples from the private posterior.
+#' Private Posterior Sampler
+#'
+#' @description
+#' Generates samples from the private posterior using a data augmentation framework.
+#'
 #'
 #' @param data_model a data model represented by a privacy class object.
 #' @param sdp the observed privatized data. Must be a vector or matrix.
@@ -62,9 +66,11 @@ dapper_sample <- function(data_model,
                        warmup = floor(niter / 2),
                        chains = 1) {
   #check inputs
+  checkmate::assert_class(data_model, "privacy")
   checkmate::qassert(chains, "X?(0,)")
   if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
-  #pb_size <- floor(niter / 100)
+
+
   p <- progressr::progressor(niter * chains)
   fout <- furrr::future_map(rep(niter, chains), dapper_chain,
                             data_model = data_model,

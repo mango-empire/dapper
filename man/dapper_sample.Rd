@@ -2,7 +2,7 @@
 % Please edit documentation in R/dapper_sample.R
 \name{dapper_sample}
 \alias{dapper_sample}
-\title{Generate samples from the private posterior.}
+\title{Private Posterior Sampler}
 \usage{
 dapper_sample(
   data_model,
@@ -32,7 +32,7 @@ A dpout object which contains:
 \item{chain}{samples from the private posterior.}
 }
 \description{
-Generate samples from the private posterior.
+Generates samples from the private posterior using a data augmentation framework.
 }
 \examples{
 #simulate confidential data

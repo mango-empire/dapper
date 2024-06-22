@@ -1,5 +1,10 @@
 #' The Discrete Gaussian Distribution
 #'
+#' @description
+#' The probability mass function and random number generator for the
+#' discrete Gaussian distribution with mean `mu` and scale parameter `sigma`.
+#'
+#'
 #' @param x vector of quantiles.
 #' @param n number of random deviates.
 #' @param mu location parameter.
@@ -35,8 +40,8 @@
 #' @export
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     #check inputs
-    checkmate::assertNumeric(x)
-    checkmate::assertScalar(mu)
+    checkmate::assert_numeric(x)
+    checkmate::assert_scalar(mu)
     checkmate::qassert(sigma, "n1[0,)")
     checkmate::qassert(log, "b1")
 

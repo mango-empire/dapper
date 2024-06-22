@@ -34,7 +34,7 @@
 
 ddlaplace <- function(x, scale = 1, log = FALSE) {
     #check inputs
-    checkmate::assertNumeric(x)
+    checkmate::assert_numeric(x)
     checkmate::qassert(scale, "n1[0,)")
     checkmate::qassert(log, "b1")
 
