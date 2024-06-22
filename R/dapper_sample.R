@@ -3,7 +3,6 @@
 #' @description
 #' Generates samples from the private posterior using a data augmentation framework.
 #'
-#'
 #' @param data_model a data model represented by a privacy class object.
 #' @param sdp the observed privatized data. Must be a vector or matrix.
 #' @param init_par initial starting point of the chain.
