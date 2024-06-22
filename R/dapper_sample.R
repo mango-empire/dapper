@@ -58,15 +58,20 @@
 #'                     init_par = -2,
 #'                     niter = 500)
 #' summary(out)
-dapper_sample <- function(data_model,
-                       sdp,
-                       init_par,
+dapper_sample <- function(data_model = NULL,
+                       sdp = NULL,
+                       init_par = NULL,
                        niter = 2000,
                        warmup = floor(niter / 2),
                        chains = 1) {
   #check inputs
   checkmate::assert_class(data_model, "privacy")
-  checkmate::qassert(chains, "X?(0,)")
+  checkmate::assert(checkmate::check_class(sdp, "numeric"),
+                    checkmate::check_class(sdp, "matrix"))
+  checkmate::assert_atomic(init_par)
+  checkmate::assert_count(niter)
+  checkmate::assert_count(warmup)
+  checkmate::assert_count(chains)
   if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
 
 

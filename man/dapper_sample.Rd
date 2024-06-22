@@ -5,9 +5,9 @@
 \title{Private Posterior Sampler}
 \usage{
 dapper_sample(
-  data_model,
-  sdp,
-  init_par,
+  data_model = NULL,
+  sdp = NULL,
+  init_par = NULL,
   niter = 2000,
   warmup = floor(niter/2),
   chains = 1
