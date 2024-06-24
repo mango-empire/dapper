@@ -75,8 +75,8 @@ dapper_sample <- function(data_model = NULL,
     checkmate::assert_count(niter - warmup)
 
     #sanity checks
-    assert_privacy <- checkmate::makeAssertionFunction(check_privacy)
-    assert_privacy(list(data_model = data_model, init_par = init_par, sdp = sdp))
+    assert_data_model <- checkmate::makeAssertionFunction(check_data_model)
+    assert_data_model(list(data_model = data_model, init_par = init_par, sdp = sdp))
 
     p <- progressr::progressor(niter * chains)
     fout <- furrr::future_map(rep(niter, chains), dapper_chain,
@@ -108,8 +108,8 @@ dapper_chain <- function(data_model,
     checkmate::assert_count(niter - warmup)
 
     #sanity checks
-    assert_privacy <- checkmate::makeAssertionFunction(check_privacy)
-    assert_privacy(list(data_model = data_model, init_par = init_par, sdp = sdp))
+    assert_data_model <- checkmate::makeAssertionFunction(check_data_model)
+    assert_data_model(list(data_model = data_model, init_par = init_par, sdp = sdp))
 
     post_f    <- data_model$post_f
     latent_f  <- data_model$latent_f
@@ -155,35 +155,18 @@ dapper_chain <- function(data_model,
     list(sample = theta_mat, accept_rate = accept_rate)
 }
 
-check_privacy <- function(x) {
+check_data_model <- function(x) {
     data_model <- x$data_model
     init_par <- x$init_par
     sdp <- x$sdp
 
-    formal_args <- function(x) names(formals(x))
-
-    if(identical(formal_args(data_model$post_f), c("dmat", "theta"))) {
-        "Arguments of post_f() must be named (dmat) and (theta) in that order."
-    }
-
-    if(identical(formal_args(data_model$st_f), c("xi", "sdp", "i"))) {
-        "Arguments of st_f() must be named (xi), (sdp) and (i) in that order."
-    }
-
-    if(identical(formal_args(data_model$priv_f), c("sdp", "tx"))) {
-        "Arguments of priv_f() must be named (sdp) and (tx) in that order."
-    }
-
-    if(identical(formal_args(data_model$latent_f), "theta")) {
-        "latent_f() must have an argument named (theta)."
-    }
-
     if(length(init_par) != data_model$npar){
-        "Dimension of initial parameter does not match privacy model."
+      return("Dimension of initial parameter does not match npar")
     }
+
     cmx <- data_model$latent_f(init_par)
     if(!checkmate::test_matrix(cmx)) {
-        "latent_f function must return a matrix."
+        return("latent_f() function must return a matrix")
     }
     stc <- data_model$st_f(cmx)
     t1 <- checkmate::test_numeric(sdp) & !checkmate::test_numeric(stc)
@@ -191,13 +174,13 @@ check_privacy <- function(x) {
     t3 <- checkmate::test_matrix(sdp) & !checkmate::test_matrix(stc)
     t4 <- !checkmate::test_matrix(sdp) & checkmate::test_matrix(stc)
     if(t1 | t2 | t3 | t4) {
-        "The output of st_f() must be of the same data type as sdp."
+        return("st_f() must return the same data type as sdp")
     }
-    if(!checkmate::test_number(data_model$priv_f(sdp,cmx))) {
-        "The output of priv_f() must be a scalar number."
+    if(!checkmate::test_number(data_model$priv_f(sdp,cmx)) | !checkmate::test_scalar(data_model$priv_f(sdp,cmx))) {
+        return("priv_f() must return a scalar number")
     }
-    if(!checkmate::test_numeric(data_model$post_f(cmx, init_par))) {
-        "The output of post_f() must be a numeric vector."
+    if(!checkmate::test_class(data_model$post_f(cmx, init_par), "numeric")) {
+        return("post_f() must return a numeric vector")
     }
 
     TRUE

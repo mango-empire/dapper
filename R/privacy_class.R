@@ -53,6 +53,12 @@ new_privacy <- function(post_f   = NULL,
   checkmate::assert(checkmate::check_character(varnames),
                     checkmate::qtest(varnames, "0"))
 
+  assert_privacy <- checkmate::makeAssertionFunction(check_privacy)
+  assert_privacy(list(post_f = post_f,
+                     latent_f = latent_f,
+                     st_f = st_f,
+                     priv_f = priv_f))
+
 
   plist <- list(post_f   = post_f,
                 latent_f = latent_f,
@@ -61,4 +67,31 @@ new_privacy <- function(post_f   = NULL,
                 npar     = npar,
                 varnames = varnames)
   structure(plist, class = "privacy")
+}
+
+check_privacy <- function(x) {
+    post_f <- x$post_f
+    latent_f <- x$latent_f
+    priv_f <- x$priv_f
+    st_f <- x$st_f
+
+    formal_args <- function(x) names(formals(x))
+
+    if(!identical(formal_args(post_f), c("dmat", "theta"))) {
+      return("Arguments of post_f() must be named (dmat) and (theta) in that order")
+    }
+
+    if(!identical(formal_args(st_f), c("xi", "sdp", "i"))) {
+      return("Arguments of st_f() must be named (xi), (sdp) and (i) in that order")
+    }
+
+    if(!identical(formal_args(priv_f), c("sdp", "tx"))) {
+      return("Arguments of priv_f() must be named (sdp) and (tx) in that order")
+    }
+
+    if(!identical(formal_args(latent_f), "theta")) {
+      return("latent_f() must have an argument named (theta)")
+    }
+
+    TRUE
 }
