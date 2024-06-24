@@ -161,7 +161,7 @@ check_data_model <- function(x) {
     sdp <- x$sdp
 
     if(length(init_par) != data_model$npar){
-      return("Dimension of initial parameter does not match npar")
+        return("Dimension of initial parameter does not match npar")
     }
 
     cmx <- data_model$latent_f(init_par)
