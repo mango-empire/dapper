@@ -64,29 +64,32 @@ dapper_sample <- function(data_model = NULL,
                        niter = 2000,
                        warmup = floor(niter / 2),
                        chains = 1) {
-  #check inputs
-  checkmate::assert_class(data_model, "privacy")
-  checkmate::assert(checkmate::check_class(sdp, "numeric"),
-                    checkmate::check_class(sdp, "matrix"))
-  checkmate::assert_atomic(init_par)
-  checkmate::assert_count(niter)
-  checkmate::assert_count(warmup)
-  checkmate::assert_count(chains)
-  if(length(init_par) != data_model$npar) stop("Dimension of initial parameter does not match privacy model")
+    #check inputs
+    checkmate::assert_class(data_model, "privacy")
+    checkmate::assert(checkmate::check_class(sdp, "numeric"),
+                      checkmate::check_class(sdp, "matrix"))
+    checkmate::assert_atomic(init_par)
+    checkmate::assert_count(niter)
+    checkmate::assert_count(warmup)
+    checkmate::assert_count(chains)
+    checkmate::assert_count(niter - warmup)
 
+    #sanity checks
+    assert_privacy <- checkmate::makeAssertionFunction(check_privacy)
+    assert_privacy(list(data_model = data_model, init_par = init_par, sdp = sdp))
 
-  p <- progressr::progressor(niter * chains)
-  fout <- furrr::future_map(rep(niter, chains), dapper_chain,
-                            data_model = data_model,
-                            sdp = sdp,
-                            init_par = init_par,
-                            warmup = warmup,
-                            prg_bar = p,
-                            .options = furrr::furrr_options(seed = TRUE))
+    p <- progressr::progressor(niter * chains)
+    fout <- furrr::future_map(rep(niter, chains), dapper_chain,
+                              data_model = data_model,
+                              sdp = sdp,
+                              init_par = init_par,
+                              warmup = warmup,
+                              prg_bar = p,
+                              .options = furrr::furrr_options(seed = TRUE))
 
-  theta_clist <- lapply(1:chains, function(s) fout[[s]]$sample)
-  accept_mat <- do.call(cbind, lapply(1:chains, function(s) fout[[s]]$accept_rate))
-  new_dpout(theta_clist, accept_mat, data_model$varnames)
+    theta_clist <- lapply(1:chains, function(s) fout[[s]]$sample)
+    accept_mat <- do.call(cbind, lapply(1:chains, function(s) fout[[s]]$accept_rate))
+    new_dpout(theta_clist, accept_mat, data_model$varnames)
 }
 
 dapper_chain <- function(data_model,
@@ -95,54 +98,110 @@ dapper_chain <- function(data_model,
                       niter = 2000,
                       warmup = floor(niter / 2),
                       prg_bar = NULL) {
-  #check inputs
-  checkmate::qassert(niter, "X?(0,)")
-  checkmate::assert_class(data_model, "privacy")
-  post_f    <- data_model$post_f
-  latent_f  <- data_model$latent_f
-  priv_f    <- data_model$priv_f
-  st_f      <- data_model$st_f
-  npar      <- data_model$npar
+    #check inputs
+    checkmate::assert_class(data_model, "privacy")
+    checkmate::assert(checkmate::check_class(sdp, "numeric"),
+                      checkmate::check_class(sdp, "matrix"))
+    checkmate::assert_atomic(init_par)
+    checkmate::assert_count(niter)
+    checkmate::assert_count(warmup)
+    checkmate::assert_count(niter - warmup)
 
-  accept_rate <- numeric(niter)
-  theta_clist <- list()
-  dmat        <- latent_f(init_par)
-  theta_mat   <- matrix(0, nrow = niter, ncol = npar)
-  theta       <- init_par
-  st          <- Reduce("+", lapply(1:nrow(dmat), function(i) st_f(dmat[i,], sdp, i)))
-  nobs        <- nrow(dmat)
+    #sanity checks
+    assert_privacy <- checkmate::makeAssertionFunction(check_privacy)
+    assert_privacy(list(data_model = data_model, init_par = init_par, sdp = sdp))
 
-  for (i in 1:niter) {
-    counter        <- 0
-    theta_mat[i, ] <- theta
-    theta          <- post_f(dmat, theta)
-    smat           <- latent_f(theta)
-    for (j in 1:nobs) {
-      xs <- smat[j, ]
-      xo <- dmat[j, ]
-      sn <- NULL
+    post_f    <- data_model$post_f
+    latent_f  <- data_model$latent_f
+    priv_f    <- data_model$priv_f
+    st_f      <- data_model$st_f
+    npar      <- data_model$npar
 
-      sn <- st - st_f(xo, sdp, j) + st_f(xs, sdp, j)
-      a <- priv_f(sdp, sn) - priv_f(sdp, st)
-      if (log(stats::runif(1)) < a) {
-        counter    <- counter + 1
-        dmat[j, ]  <- xs
-        st         <- sn
+    accept_rate <- numeric(niter)
+    theta_clist <- list()
+    dmat        <- latent_f(init_par)
+    theta_mat   <- matrix(0, nrow = niter, ncol = npar)
+    theta       <- init_par
+    st          <- Reduce("+", lapply(1:nrow(dmat), function(i) st_f(dmat[i,], sdp, i)))
+    nobs        <- nrow(dmat)
+
+    for (i in 1:niter) {
+      counter        <- 0
+      theta_mat[i, ] <- theta
+      theta          <- post_f(dmat, theta)
+      smat           <- latent_f(theta)
+      for (j in 1:nobs) {
+        xs <- smat[j, ]
+        xo <- dmat[j, ]
+        sn <- NULL
+
+        sn <- st - st_f(xo, sdp, j) + st_f(xs, sdp, j)
+        a <- priv_f(sdp, sn) - priv_f(sdp, st)
+        if (log(stats::runif(1)) < a) {
+          counter    <- counter + 1
+          dmat[j, ]  <- xs
+          st         <- sn
+        }
       }
+      accept_rate[i] <- counter / nobs
+      if (!is.null(prg_bar)) prg_bar(message = sprintf("Iteration %g", i))
     }
-    accept_rate[i] <- counter / nobs
-    if (!is.null(prg_bar)) prg_bar(message = sprintf("Iteration %g", i))
-  }
 
-  if (warmup > 0) {
-    theta_mat <- theta_mat[-c(1:warmup), , drop = FALSE]
-    accept_rate <- accept_rate[-c(1:warmup)]
-  }
+    if (warmup > 0) {
+      theta_mat <- theta_mat[-c(1:warmup), , drop = FALSE]
+      accept_rate <- accept_rate[-c(1:warmup)]
+    }
 
-  list(sample = theta_mat, accept_rate = accept_rate)
+    list(sample = theta_mat, accept_rate = accept_rate)
 }
 
+check_privacy <- function(x) {
+    data_model <- x$data_model
+    init_par <- x$init_par
+    sdp <- x$sdp
 
+    formal_args <- function(x) names(formals(x))
+
+    if(identical(formal_args(data_model$post_f), c("dmat", "theta"))) {
+        "Arguments of post_f() must be named (dmat) and (theta) in that order."
+    }
+
+    if(identical(formal_args(data_model$st_f), c("xi", "sdp", "i"))) {
+        "Arguments of st_f() must be named (xi), (sdp) and (i) in that order."
+    }
+
+    if(identical(formal_args(data_model$priv_f), c("sdp", "tx"))) {
+        "Arguments of priv_f() must be named (sdp) and (tx) in that order."
+    }
+
+    if(identical(formal_args(data_model$latent_f), "theta")) {
+        "latent_f() must have an argument named (theta)."
+    }
+
+    if(length(init_par) != data_model$npar){
+        "Dimension of initial parameter does not match privacy model."
+    }
+    cmx <- data_model$latent_f(init_par)
+    if(!checkmate::test_matrix(cmx)) {
+        "latent_f function must return a matrix."
+    }
+    stc <- data_model$st_f(cmx)
+    t1 <- checkmate::test_numeric(sdp) & !checkmate::test_numeric(stc)
+    t2 <- !checkmate::test_numeric(sdp) & checkmate::test_numeric(stc)
+    t3 <- checkmate::test_matrix(sdp) & !checkmate::test_matrix(stc)
+    t4 <- !checkmate::test_matrix(sdp) & checkmate::test_matrix(stc)
+    if(t1 | t2 | t3 | t4) {
+        "The output of st_f() must be of the same data type as sdp."
+    }
+    if(!checkmate::test_number(data_model$priv_f(sdp,cmx))) {
+        "The output of priv_f() must be a scalar number."
+    }
+    if(!checkmate::test_numeric(data_model$post_f(cmx, init_par))) {
+        "The output of post_f() must be a numeric vector."
+    }
+
+    TRUE
+}
 
 #' Summarise dpout object.
 #'

@@ -49,8 +49,10 @@ new_privacy <- function(post_f   = NULL,
   checkmate::assert_function(latent_f)
   checkmate::assert_function(priv_f)
   checkmate::assert_function(st_f)
-  if(!is.null(st_f)) checkmate::assert_function(st_f)
-  checkmate::assert_int(npar)
+  checkmate::assert_count(npar)
+  checkmate::assert(checkmate::check_character(varnames),
+                    checkmate::qtest(varnames, "0"))
+
 
   plist <- list(post_f   = post_f,
                 latent_f = latent_f,
