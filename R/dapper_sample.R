@@ -44,8 +44,8 @@
 #' st_f <- function(xi, sdp, i) {
 #'     mean(xi)
 #' }
-#' priv_f <- function(sdp, tx) {
-#'   sum(dnorm(sdp - tx, 0, 1/eps, TRUE))
+#' priv_f <- function(sdp, sx) {
+#'   sum(dnorm(sdp - sx, 0, 1/eps, TRUE))
 #' }
 #' dmod <- new_privacy(post_f = post_f,
 #'   latent_f = latent_f,

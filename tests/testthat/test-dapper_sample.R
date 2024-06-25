@@ -18,7 +18,7 @@ test_that("basic sampler check", {
     post_f <- function(dmat, theta) 1
     latent_f <- function(theta) as.matrix(1)
     st_f <- function(xi, sdp, i) 1
-    priv_f <- function(sdp, tx) 1
+    priv_f <- function(sdp, sx) 1
 
     dmod <- new_privacy(post_f = post_f,
                         latent_f = latent_f,
@@ -40,7 +40,7 @@ test_that("return checks work", {
     post_f <- function(dmat, theta) 1
     latent_f <- function(theta) as.matrix(1)
     st_f <- function(xi, sdp, i) 1
-    priv_f <- function(sdp, tx) 1
+    priv_f <- function(sdp, sx) 1
 
     #check latent_f()
     latent_e <- function(theta) 1
@@ -80,7 +80,7 @@ test_that("return checks work", {
                                niter = 500))
 
     #check priv_f()
-    priv_e <- function(sdp, tx) as.matrix(1)
+    priv_e <- function(sdp, sx) as.matrix(1)
     dmod <- new_privacy(post_f = post_e,
                         latent_f = latent_f,
                         priv_f = priv_e,

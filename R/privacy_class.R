@@ -9,30 +9,24 @@
 #'
 #' @details
 #' * `post_f()` is a function which makes draws from the posterior sampler. It has
-#' the syntax `post_f(dmat, theta)`. Here `dmat` is an R matrix representing the confidential data.
-#' Note `dmat` must be a matrix even if there is only one dimension. Thus, `dmat` cannot
-#' be a vector for instance. This function can be constructed by wrapping MCMC samplers generated from other R packages
+#' the syntax `post_f(dmat, theta)`. Here `dmat` is a numeric matrix representing the confidential database
+#' and `theta` is a numeric vector which serves as the initialization point for a one sample draw.
+#' The easiest, bug-free way to construct `post_f()` is to use a conjugate prior. However,
+#' this function can also be constructed by wrapping a MCMC sampler generated from other R packages
 #' (e.g. \CRANpkg{rstan}, \CRANpkg{fmcmc}, \CRANpkg{adaptMCMC}).
-#' If using this approach, it is recommended to avoid using packages
-#' with a large initialization overhead such as \CRANpkg{mcmc} since the sampler is reinitialized
-#' every loop iteration. In the case of \CRANpkg{mcmc},
-#' the Metropolis-Hastings loop is implemented in C so there is a significant initialization cost
-#' when calling from an R function. The `theta` argument is an R vector and its purpose is
-#' to serve as the initialization point for `post_f`.
 #'
-#' * `priv_f()` is an R function that represents the log of the privacy mechanism density.
+#' * `priv_f()` is a function that represents the log of the privacy mechanism density.
 #' This function has the form `priv_f(sdp, sx)` where `sdp` and `sx` are both either
-#' a R vector or matrix. The arguments must appear in the exact order with the same variables names as defined above.
-#' Finally, the return value of `priv_f` must be a real number.
+#' a numeric vector or matrix. The arguments must appear in the exact stated order with the same variables names as mentioned.
+#' Finally, the return value of `priv_f()` must be a numeric vector of length one.
 #'
-#' * `st_f()` is an R function which calculates a summary statistic. It
+#' * `st_f()` is a function which calculates a summary statistic. It
 #' has the syntax `st_f(i, xi, sdp)` where the three arguments must appear in the stated order.
 #' The role of this function is to represent terms in the definition of record additivity.
-#' Here the type class for `i` is an integer,
-#' while `xi` is an R vector and `sdp` is an R vector or matrix.
+#' Here `i` is an integer,
+#' while `xi` is an numeric vector and `sdp` is a numeric vector or matrix.
 #'
-#' * `npar` is an integer value that represents the dimension of `theta`. It
-#' should output a vector of the same length as `post_f`.
+#' * `npar` is an integer equal to the dimension of `theta`.
 #' @md
 #'
 #' @return A S3 object of class \code{privacy}.
@@ -85,8 +79,8 @@ check_privacy <- function(x) {
       return("Arguments of st_f() must be named (xi), (sdp) and (i) in that order")
     }
 
-    if(!identical(formal_args(priv_f), c("sdp", "tx"))) {
-      return("Arguments of priv_f() must be named (sdp) and (tx) in that order")
+    if(!identical(formal_args(priv_f), c("sdp", "sx"))) {
+      return("Arguments of priv_f() must be named (sdp) and (sx) in that order")
     }
 
     if(!identical(formal_args(latent_f), "theta")) {
