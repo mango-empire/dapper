@@ -32,11 +32,12 @@
 #' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
 #' \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2004.00010>
 #'
-#' @return ddnorm gives the probability mass function and rdnorm
-#' generates random deviates.
+#' @return
+#' * `ddnorm()` returns a numeric vector representing the probability mass function of the
+#' discrete Gaussian distribution.
 #'
-#' @name DiscreteGuassian
-#' @aliases DiscreteGuassian
+#' * `rdnorm()` returns a numeric vector of random samples from the discrete Guassian distribution.
+#'
 #' @export
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     #check inputs
@@ -79,9 +80,7 @@ ddnorm_constant <- function(sigma) {
     }
 }
 
-#' @rdname DiscreteGuassian
-#' @export
-
+#' @rdname ddnorm
 rdnorm <- function(n, mu = 0, sigma = 1) {
     #check inputs
     checkmate::assertCount(n)
