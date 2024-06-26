@@ -1,5 +1,9 @@
 #' Creates a data model.
 #'
+#' @description
+#' Creates a `privacy` object to be used as input into `dapper_sample()`.
+#'
+#'
 #' @param post_f a function that draws posterior samples given the confidential data.
 #' @param latent_f a function that represents the latent data sampling model.
 #' @param priv_f a function that represents the log likelihood of the privacy mechanism.

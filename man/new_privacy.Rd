@@ -30,7 +30,7 @@ new_privacy(
 A S3 object of class \code{privacy}.
 }
 \description{
-Creates a data model.
+Creates a \code{privacy} object to be used as input into \code{dapper_sample()}.
 }
 \details{
 \itemize{
