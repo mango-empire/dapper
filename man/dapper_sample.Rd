@@ -15,7 +15,7 @@ dapper_sample(
 )
 }
 \arguments{
-\item{data_model}{a data model represented by a privacy class object.}
+\item{data_model}{a data model represented by a \code{privacy} class object.}
 
 \item{sdp}{the observed privatized data. Must be a vector or matrix.}
 
