@@ -6,9 +6,17 @@
 #' @param data_model a data model represented by a privacy class object.
 #' @param sdp the observed privatized data. Must be a vector or matrix.
 #' @param init_par initial starting point of the chain.
+#' @param seed set random seed.
 #' @param niter number of draws.
 #' @param warmup number of iterations to discard as warmup. Default is half of niter.
 #' @param chains number of MCMC chains to run. Can be done in parallel or sequentially.
+#'
+#' @details
+#' Generates samples from the private posterior implied by `data_model`. The
+#' `data_model` input must by an object of class `privacy` which is created
+#' using the `new_privacy()` constructor. MCMC chains can be run in parallel
+#' using `furrr::future_map()`. See the \CRANpkg{furrr} package for specifics.
+#'
 #'
 #' @return A dpout object which contains:
 #' \item{accept_prob}{acceptance probabilities.}
@@ -18,6 +26,8 @@
 #' @references
 #' Ju, N., Awan, J. A., Gong, R., & Rao, V. A. (2022). Data Augmentation MCMC
 #' for Bayesian Inference from Privatized Data. \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2206.00710>
+#'
+#' @seealso [new_privacy()]
 #'
 #' @examples
 #' #simulate confidential data
@@ -58,12 +68,26 @@
 #'                     init_par = -2,
 #'                     niter = 500)
 #' summary(out)
+#'
+#' # for parallel computing we 'plan' a session
+#' # the code below uses 2 CPU cores for parallel computing
+#' library(furrr)
+#' plan(multisession, workers = 2)
+#' out <- dapper_sample(dmod,
+#'                     sdp = sdp,
+#'                     init_par = -2,
+#'                     niter = 500,
+#'                     chains = 2)
+#'
+#' # to go back to sequential computing we use
+#' plan(sequential)
 dapper_sample <- function(data_model = NULL,
-                       sdp = NULL,
-                       init_par = NULL,
-                       niter = 2000,
-                       warmup = floor(niter / 2),
-                       chains = 1) {
+                          sdp        = NULL,
+                          init_par   = NULL,
+                          seed       = NULL,
+                          niter      = 2000,
+                          warmup     = floor(niter / 2),
+                          chains     = 1) {
     #check inputs
     checkmate::assert_class(data_model, "privacy")
     checkmate::assert(checkmate::check_class(sdp, "numeric"),
@@ -73,11 +97,13 @@ dapper_sample <- function(data_model = NULL,
     checkmate::assert_count(warmup)
     checkmate::assert_count(chains)
     checkmate::assert_count(niter - warmup)
+    if(!is.null(seed)) checkmate::assert_count(seed)
 
     #sanity checks
     assert_data_model <- checkmate::makeAssertionFunction(check_data_model)
     assert_data_model(list(data_model = data_model, init_par = init_par, sdp = sdp))
 
+    if(!is.null(seed)) set.seed(seed)
     p <- progressr::progressor(niter * chains)
     fout <- furrr::future_map(rep(niter, chains), dapper_chain,
                               data_model = data_model,

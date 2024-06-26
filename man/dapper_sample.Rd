@@ -8,6 +8,7 @@ dapper_sample(
   data_model = NULL,
   sdp = NULL,
   init_par = NULL,
+  seed = NULL,
   niter = 2000,
   warmup = floor(niter/2),
   chains = 1
@@ -19,6 +20,8 @@ dapper_sample(
 \item{sdp}{the observed privatized data. Must be a vector or matrix.}
 
 \item{init_par}{initial starting point of the chain.}
+
+\item{seed}{set random seed.}
 
 \item{niter}{number of draws.}
 
@@ -33,6 +36,12 @@ A dpout object which contains:
 }
 \description{
 Generates samples from the private posterior using a data augmentation framework.
+}
+\details{
+Generates samples from the private posterior implied by \code{data_model}. The
+\code{data_model} input must by an object of class \code{privacy} which is created
+using the \code{new_privacy()} constructor. MCMC chains can be run in parallel
+using \code{furrr::future_map()}. See the \CRANpkg{furrr} package for specifics.
 }
 \examples{
 #simulate confidential data
@@ -73,8 +82,24 @@ out <- dapper_sample(dmod,
                     init_par = -2,
                     niter = 500)
 summary(out)
+
+# for parallel computing we 'plan' a session
+# the code below uses 2 CPU cores for parallel computing
+library(furrr)
+plan(multisession, workers = 2)
+out <- dapper_sample(dmod,
+                    sdp = sdp,
+                    init_par = -2,
+                    niter = 500,
+                    chains = 2)
+
+# to go back to sequential computing we use
+plan(sequential)
 }
 \references{
 Ju, N., Awan, J. A., Gong, R., & Rao, V. A. (2022). Data Augmentation MCMC
 for Bayesian Inference from Privatized Data. \emph{arXiv}. \url{https://doi.org/10.48550/ARXIV.2206.00710}
+}
+\seealso{
+\code{\link[=new_privacy]{new_privacy()}}
 }
