@@ -41,7 +41,7 @@ Generates samples from the private posterior using a data augmentation framework
 Generates samples from the private posterior implied by \code{data_model}. The
 \code{data_model} input must by an object of class \code{privacy} which is created
 using the \code{new_privacy()} constructor. MCMC chains can be run in parallel
-using \code{furrr::future_map()}. See the \CRANpkg{furrr} package for specifics.
+using \code{furrr::future_map()}. See the \CRANpkg{furrr} package documentation for specifics.
 }
 \examples{
 #simulate confidential data
