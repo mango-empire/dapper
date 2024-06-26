@@ -81,6 +81,7 @@ ddnorm_constant <- function(sigma) {
 }
 
 #' @rdname ddnorm
+#' @export
 rdnorm <- function(n, mu = 0, sigma = 1) {
     #check inputs
     checkmate::assertCount(n)

@@ -28,8 +28,6 @@
 #' @return ddlaplace gives the probability mass function and rdlaplace
 #' generates random deviates.
 #'
-#' @name DiscreteLaplace
-#'
 #' @export
 
 ddlaplace <- function(x, scale = 1, log = FALSE) {
@@ -47,9 +45,8 @@ ddlaplace <- function(x, scale = 1, log = FALSE) {
     }
 }
 
-#' @rdname DiscreteLaplace
+#' @rdname ddlaplace
 #' @export
-
 rdlaplace <- function(n, scale = 1) {
     #check inputs
     checkmate::assertCount(n)
