@@ -25,8 +25,11 @@
 #' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
 #' \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2004.00010>
 #'
-#' @return ddlaplace gives the probability mass function and rdlaplace
-#' generates random deviates.
+#' @return
+#' * `ddlaplace()` returns a numeric vector representing the probability mass function of the
+#' discrete Laplace distribution.
+#'
+#' * `rdlaplace()` returns a numeric vector of random samples from the discrete Laplace distribution.
 #'
 #' @export
 
