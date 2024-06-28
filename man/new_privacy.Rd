@@ -2,7 +2,7 @@
 % Please edit documentation in R/privacy_class.R
 \name{new_privacy}
 \alias{new_privacy}
-\title{Creates a data model.}
+\title{\code{privacy} Object Constructor.}
 \usage{
 new_privacy(
   post_f = NULL,

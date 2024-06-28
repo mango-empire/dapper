@@ -19,8 +19,9 @@
 #'
 #'
 #' @return A dpout object which contains:
-#' \item{accept_prob}{acceptance probabilities.}
-#' \item{chain}{samples from the private posterior.}
+#' *`chain`: a `draw_matrix` object containing `niter - warmpup` draws from the private posterior.
+#' *`accept_prob`: a `(niter - warmup)` row matrix containing acceptance probabilities.
+#' Each column corresponds to a parameter.
 #' @export
 #'
 #' @references

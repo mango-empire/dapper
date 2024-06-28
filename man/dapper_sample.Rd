@@ -31,8 +31,9 @@ dapper_sample(
 }
 \value{
 A dpout object which contains:
-\item{accept_prob}{acceptance probabilities.}
-\item{chain}{samples from the private posterior.}
+*\code{chain}: a \code{draw_matrix} object containing \code{niter - warmpup} draws from the private posterior.
+*\code{accept_prob}: a \code{(niter - warmup)} row matrix containing acceptance probabilities.
+Each column corresponds to a parameter.
 }
 \description{
 Generates samples from the private posterior using a data augmentation framework.

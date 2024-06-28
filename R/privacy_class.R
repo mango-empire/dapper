@@ -1,4 +1,4 @@
-#' Creates a data model.
+#' `privacy` Object Constructor.
 #'
 #' @description
 #' Creates a `privacy` object to be used as input into `dapper_sample()`.
