@@ -43,7 +43,7 @@ Generates samples from the private posterior implied by \code{data_model}. The
 \code{data_model} input must by an object of class \code{privacy} which is created
 using the \code{new_privacy()} constructor. MCMC chains can be run in parallel
 using \code{furrr::future_map()}. See the \CRANpkg{furrr} package documentation for specifics.
-Long computations can be monitered with the \CRANpkg{progressr} package.
+Long computations can be monitored with the \CRANpkg{progressr} package.
 }
 \examples{
 #simulate confidential data
