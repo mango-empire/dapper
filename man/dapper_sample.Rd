@@ -100,7 +100,7 @@ plan(sequential)
 }
 \references{
 Ju, N., Awan, J. A., Gong, R., & Rao, V. A. (2022). Data Augmentation MCMC
-for Bayesian Inference from Privatized Data. \emph{arXiv}. \url{https://doi.org/10.48550/ARXIV.2206.00710}
+for Bayesian Inference from Privatized Data. \emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2206.00710}
 }
 \seealso{
 \code{\link[=new_privacy]{new_privacy()}}
