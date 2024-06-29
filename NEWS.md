@@ -1,3 +1,3 @@
-# dapper (development version)
+# dapper 1.0.0
 
 * Initial CRAN submission.
