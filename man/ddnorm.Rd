@@ -50,5 +50,5 @@ rdnorm(10)
 }
 \references{
 Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
-\emph{arXiv}. \url{https://doi.org/10.48550/ARXIV.2004.00010}
+\emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2004.00010}
 }

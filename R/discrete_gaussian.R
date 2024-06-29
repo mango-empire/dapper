@@ -30,7 +30,7 @@
 #'
 #' @references
 #' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
-#' \emph{arXiv}. <https://doi.org/10.48550/ARXIV.2004.00010>
+#' \emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2004.00010}
 #'
 #' @return
 #' * `ddnorm()` returns a numeric vector representing the probability mass function of the
