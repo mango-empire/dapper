@@ -16,6 +16,7 @@
 #' `data_model` input must by an object of class `privacy` which is created
 #' using the `new_privacy()` constructor. MCMC chains can be run in parallel
 #' using `furrr::future_map()`. See the \CRANpkg{furrr} package documentation for specifics.
+#' Long computations can be monitered with the \CRANpkg{progressr} package.
 #'
 #'
 #' @return A dpout object which contains:
