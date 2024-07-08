@@ -24,7 +24,7 @@ rdnorm(n, mu = 0, sigma = 1)
 \itemize{
 \item ddnorm() returns a numeric vector representing the probability mass function of the
 discrete Gaussian distribution.
-\item rdnorm() returns a numeric vector of random samples from the discrete Guassian distribution.
+\item rdnorm() returns a numeric vector of random samples from the discrete Gaussian distribution.
 }
 }
 \description{

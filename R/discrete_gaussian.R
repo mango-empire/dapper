@@ -36,7 +36,7 @@
 #' * ddnorm() returns a numeric vector representing the probability mass function of the
 #' discrete Gaussian distribution.
 #'
-#' * rdnorm() returns a numeric vector of random samples from the discrete Guassian distribution.
+#' * rdnorm() returns a numeric vector of random samples from the discrete Gaussian distribution.
 #'
 #' @export
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
