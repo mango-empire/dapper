@@ -55,7 +55,7 @@ ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     }
 }
 
-ddnorm_constant <- function(sigma) {
+ddnorm_constant <- memoise::memoise(function(sigma) {
     #check input
     checkmate::qassert(sigma, "n1[0,)")
 
@@ -78,7 +78,7 @@ ddnorm_constant <- function(sigma) {
     } else {
         (psum + fsum) / 2
     }
-}
+})
 
 #' @rdname ddnorm
 #' @export

@@ -3,14 +3,14 @@ Title: Data Augmentation for Private Posterior Estimation
 Version: 1.0.0
 Authors@R: 
     person("Kevin", "Eng", , "kevine1221@gmail.com", role = c("aut", "cre", "cph"))
-Description: Tools for conducting privacy-aware Bayesian inference. The `dapper_sample()`
+Description: Tools for conducting privacy-aware Bayesian inference. The dapper_sample()
              function takes an existing sampler as input and automatically constructs
              a privacy-aware sampler. The process of constructing a sampler is simplified 
              through the specification of four independent modules, allowing for
              easy comparison between different privacy mechanisms by only swapping
              out the relevant modules. Probability mass functions
              for the discrete Gaussian and discrete Laplacian are provided to facilitate
-             analyses dealing with privatized count data. The output of `dapper_sample`
+             analyses dealing with privatized count data. The output of dapper_sample()
              fits easily within existing Bayesian workflows since draws
              are stored in `draw_matrix` format.
 License: MIT + file LICENSE
