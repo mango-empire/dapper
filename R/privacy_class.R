@@ -1,7 +1,7 @@
 #' `privacy` Object Constructor.
 #'
 #' @description
-#' Creates a `privacy` object to be used as input into `dapper_sample()`.
+#' Creates a `privacy` object to be used as input into dapper_sample().
 #'
 #'
 #' @param post_f a function that draws posterior samples given the confidential data.
@@ -12,20 +12,20 @@
 #' @param varnames an optional character vector of parameter names. Used to label summary outputs.
 #'
 #' @details
-#' * `post_f()` is a function which makes draws from the posterior sampler. It has
-#' the syntax `post_f(dmat, theta)`. Here `dmat` is a numeric matrix representing the confidential database
+#' * post_f() is a function which makes draws from the posterior sampler. It has
+#' the syntax post_f(dmat, theta). Here `dmat` is a numeric matrix representing the confidential database
 #' and `theta` is a numeric vector which serves as the initialization point for a one sample draw.
-#' The easiest, bug-free way to construct `post_f()` is to use a conjugate prior. However,
+#' The easiest, bug-free way to construct post_f() is to use a conjugate prior. However,
 #' this function can also be constructed by wrapping a MCMC sampler generated from other R packages
 #' (e.g. \CRANpkg{rstan}, \CRANpkg{fmcmc}, \CRANpkg{adaptMCMC}).
 #'
-#' * `priv_f()` is a function that represents the log of the privacy mechanism density.
-#' This function has the form `priv_f(sdp, sx)` where `sdp` and `sx` are both either
+#' * priv_f() is a function that represents the log of the privacy mechanism density.
+#' This function has the form priv_f(sdp, sx) where `sdp` and `sx` are both either
 #' a numeric vector or matrix. The arguments must appear in the exact stated order with the same variables names as mentioned.
-#' Finally, the return value of `priv_f()` must be a numeric vector of length one.
+#' Finally, the return value of priv_f() must be a numeric vector of length one.
 #'
-#' * `st_f()` is a function which calculates a summary statistic. It
-#' has the syntax `st_f(i, xi, sdp)` where the three arguments must appear in the stated order.
+#' * st_f() is a function which calculates a summary statistic. It
+#' has the syntax st_f(i, xi, sdp) where the three arguments must appear in the stated order.
 #' The role of this function is to represent terms in the definition of record additivity.
 #' Here `i` is an integer,
 #' while `xi` is an numeric vector and `sdp` is a numeric vector or matrix.

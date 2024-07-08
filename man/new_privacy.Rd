@@ -30,22 +30,22 @@ new_privacy(
 A S3 object of class \code{privacy}.
 }
 \description{
-Creates a \code{privacy} object to be used as input into \code{dapper_sample()}.
+Creates a \code{privacy} object to be used as input into dapper_sample().
 }
 \details{
 \itemize{
-\item \code{post_f()} is a function which makes draws from the posterior sampler. It has
-the syntax \code{post_f(dmat, theta)}. Here \code{dmat} is a numeric matrix representing the confidential database
+\item post_f() is a function which makes draws from the posterior sampler. It has
+the syntax post_f(dmat, theta). Here \code{dmat} is a numeric matrix representing the confidential database
 and \code{theta} is a numeric vector which serves as the initialization point for a one sample draw.
-The easiest, bug-free way to construct \code{post_f()} is to use a conjugate prior. However,
+The easiest, bug-free way to construct post_f() is to use a conjugate prior. However,
 this function can also be constructed by wrapping a MCMC sampler generated from other R packages
 (e.g. \CRANpkg{rstan}, \CRANpkg{fmcmc}, \CRANpkg{adaptMCMC}).
-\item \code{priv_f()} is a function that represents the log of the privacy mechanism density.
-This function has the form \code{priv_f(sdp, sx)} where \code{sdp} and \code{sx} are both either
+\item priv_f() is a function that represents the log of the privacy mechanism density.
+This function has the form priv_f(sdp, sx) where \code{sdp} and \code{sx} are both either
 a numeric vector or matrix. The arguments must appear in the exact stated order with the same variables names as mentioned.
-Finally, the return value of \code{priv_f()} must be a numeric vector of length one.
-\item \code{st_f()} is a function which calculates a summary statistic. It
-has the syntax \code{st_f(i, xi, sdp)} where the three arguments must appear in the stated order.
+Finally, the return value of priv_f() must be a numeric vector of length one.
+\item st_f() is a function which calculates a summary statistic. It
+has the syntax st_f(i, xi, sdp) where the three arguments must appear in the stated order.
 The role of this function is to represent terms in the definition of record additivity.
 Here \code{i} is an integer,
 while \code{xi} is an numeric vector and \code{sdp} is a numeric vector or matrix.
