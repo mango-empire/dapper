@@ -1,4 +1,8 @@
 #' Discrete Laplace Distribution
+#' 
+#' @description
+#' The probability mass function and random number generator for the
+#' discrete Laplacian distribution.
 #'
 #' @param x a vector of quantiles.
 #' @param n number of random deviates.

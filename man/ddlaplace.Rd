@@ -26,7 +26,8 @@ discrete Laplace distribution.
 }
 }
 \description{
-Discrete Laplace Distribution
+The probability mass function and random number generator for the
+discrete Laplacian distribution.
 }
 \details{
 Probability mass function
