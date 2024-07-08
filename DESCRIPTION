@@ -21,12 +21,12 @@ URL: https://github.com/mango-empire/dapper
 BugReports: https://github.com/mango-empire/dapper/issues
 Suggests: 
     testthat (>= 3.0.0),
+    memoise
 Config/testthat/edition: 3
 Imports: 
     bayesplot,
     checkmate,
     furrr,
-    memoise,
     posterior,
     progressr,
     stats
