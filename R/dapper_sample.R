@@ -14,8 +14,8 @@
 #' @details
 #' Generates samples from the private posterior implied by `data_model`. The
 #' `data_model` input must by an object of class `privacy` which is created
-#' using the `new_privacy()` constructor. MCMC chains can be run in parallel
-#' using `furrr::future_map()`. See the \CRANpkg{furrr} package documentation for specifics.
+#' using the new_privacy() constructor. MCMC chains can be run in parallel
+#' using furrr::future_map(). See the \CRANpkg{furrr} package documentation for specifics.
 #' Long computations can be monitored with the \CRANpkg{progressr} package.
 #'
 #'

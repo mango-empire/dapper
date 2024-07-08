@@ -26,10 +26,10 @@
 #' \emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2004.00010}
 #'
 #' @return
-#' * `ddlaplace()` returns a numeric vector representing the probability mass function of the
+#' * ddlaplace() returns a numeric vector representing the probability mass function of the
 #' discrete Laplace distribution.
 #'
-#' * `rdlaplace()` returns a numeric vector of random samples from the discrete Laplace distribution.
+#' * rdlaplace() returns a numeric vector of random samples from the discrete Laplace distribution.
 #'
 #' @export
 

@@ -20,9 +20,9 @@ rdlaplace(n, scale = 1)
 }
 \value{
 \itemize{
-\item \code{ddlaplace()} returns a numeric vector representing the probability mass function of the
+\item ddlaplace() returns a numeric vector representing the probability mass function of the
 discrete Laplace distribution.
-\item \code{rdlaplace()} returns a numeric vector of random samples from the discrete Laplace distribution.
+\item rdlaplace() returns a numeric vector of random samples from the discrete Laplace distribution.
 }
 }
 \description{
