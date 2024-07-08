@@ -28,8 +28,8 @@ Config/testthat/edition: 3
 Imports: 
     bayesplot,
     checkmate,
-    memoise,
     furrr,
+    memoise,
     posterior,
     progressr,
     stats

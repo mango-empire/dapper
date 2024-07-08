@@ -7,6 +7,8 @@ test_that("check ddnorm", {
 
     #center moves with mean
     expect_equal(ddnorm(1, 0, 1), ddnorm(4, 3, 1))
+    
+    expect_true(memoise::is.memoised(ddnorm_constant))
 
 })
 

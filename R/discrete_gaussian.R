@@ -55,7 +55,13 @@ ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     }
 }
 
-ddnorm_constant <- memoise::memoise(function(sigma) {
+#' Normalizing Constant
+#'
+#' @param sigma 
+#'
+#' @importFrom memoise memoise
+#' @noRd
+ddnorm_constant <- memoise(function(sigma) {
     #check input
     checkmate::qassert(sigma, "n1[0,)")
 
