@@ -11,7 +11,7 @@ Description: A data augmentation based sampler for conducting privacy-aware Baye
              out the relevant modules. Probability mass functions
              for the discrete Gaussian and discrete Laplacian are provided to facilitate
              analyses dealing with privatized count data. The output of dapper_sample()
-             can be analyzed using many of the same tools from the `rstan` ecosystem. For methodological details
+             can be analyzed using many of the same tools from the 'rstan' ecosystem. For methodological details
              on the sampler see Ju et al. (2022) <doi:10.48550/arXiv.2206.00710>,
              and for details on the discrete Gaussian and discrete Laplacian distributions see
              Canonne et al. (2020) <doi:10.48550/arXiv.2004.00010>.

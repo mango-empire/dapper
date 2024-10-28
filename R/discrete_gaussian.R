@@ -9,7 +9,7 @@
 #' @param n number of random deviates.
 #' @param mu location parameter.
 #' @param sigma scale parameter.
-#' @param log logical; if \code{TRUE}, probabilities are given as log(p).
+#' @param log logical; if \code{TRUE}, log unnormalized probabilities are returned.
 #'
 #' @details
 #'
@@ -49,7 +49,8 @@ ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     t1 <- exp(-(x - mu)^2 / (2 * sigma^2))
     t2 <- ddnorm_constant(sigma)
     if(log) {
-      log (t1) - log (t2)
+      #log (t1) - log (t2)
+      log (t1)
     } else {
       t1 / t2
     }
