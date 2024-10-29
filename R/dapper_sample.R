@@ -197,7 +197,6 @@ check_data_model <- function(x) {
         return("latent_f() function must return a matrix")
     }
     
-    print("hello")
     stc <- data_model$st_f(cmx[1,], sdp, 1)
     t1 <- checkmate::test_numeric(sdp) & !checkmate::test_numeric(stc)
     t2 <- !checkmate::test_numeric(sdp) & checkmate::test_numeric(stc)
