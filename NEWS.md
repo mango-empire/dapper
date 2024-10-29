@@ -1,9 +1,8 @@
 # dapper 1.0.1
 
-* Fixed bug in example and st_f() assertion.
-* Corrected typo in description of st_f().
-* Changed the behavior of ddnorm to return the log unnormalized density when log
-is set to `TRUE`.
+* `st_f()` assertion bug fix. Incorrect argument order in one of the checks.
+* `st_f()` description typo corrected.
+* `ddnorm()` now returns the log unnormalized density when the log option is set to `TRUE`.
 
 # dapper 1.0.0
 
