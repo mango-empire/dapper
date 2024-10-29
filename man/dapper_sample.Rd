@@ -68,10 +68,10 @@ latent_f <- function(theta) {
     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
 }
 st_f <- function(xi, sdp, i) {
-    mean(xi)
+    xi
 }
 priv_f <- function(sdp, sx) {
-  sum(dnorm(sdp - sx, 0, 1/eps, TRUE))
+  sum(dnorm(sdp - sx/n, 0, 1/eps, TRUE))
 }
 dmod <- new_privacy(post_f = post_f,
   latent_f = latent_f,

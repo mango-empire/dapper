@@ -45,7 +45,7 @@ This function has the form priv_f(sdp, sx) where \code{sdp} and \code{sx} are bo
 a numeric vector or matrix. The arguments must appear in the exact stated order with the same variables names as mentioned.
 Finally, the return value of priv_f() must be a numeric vector of length one.
 \item st_f() is a function which calculates a summary statistic. It
-has the syntax st_f(i, xi, sdp) where the three arguments must appear in the stated order.
+has the syntax st_f(xi, sdp, i) where the three arguments must appear in the stated order.
 The role of this function is to represent terms in the definition of record additivity.
 Here \code{i} is an integer,
 while \code{xi} is an numeric vector and \code{sdp} is a numeric vector or matrix.

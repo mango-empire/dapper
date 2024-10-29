@@ -16,7 +16,7 @@ rdnorm(n, mu = 0, sigma = 1)
 
 \item{sigma}{scale parameter.}
 
-\item{log}{logical; if \code{TRUE}, probabilities are given as log(p).}
+\item{log}{logical; if \code{TRUE}, log unnormalized probabilities are returned.}
 
 \item{n}{number of random deviates.}
 }
