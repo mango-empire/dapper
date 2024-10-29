@@ -1,3 +1,5 @@
+# dapper 1.0.2
+
 # dapper 1.0.1
 
 * `st_f()` assertion bug fix. Incorrect argument order in one of the checks.

@@ -1,6 +1,6 @@
 Package: dapper
 Title: Data Augmentation for Private Posterior Estimation
-Version: 1.0.1
+Version: 1.0.0
 Authors@R: 
     person("Kevin", "Eng", , "kevine1221@gmail.com", role = c("aut", "cre", "cph"))
 Description: A data augmentation based sampler for conducting privacy-aware Bayesian inference. The dapper_sample()
