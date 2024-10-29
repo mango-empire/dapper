@@ -25,7 +25,7 @@
 #' Finally, the return value of priv_f() must be a numeric vector of length one.
 #'
 #' * st_f() is a function which calculates a summary statistic. It
-#' has the syntax st_f(i, xi, sdp) where the three arguments must appear in the stated order.
+#' has the syntax st_f(xi, sdp, i) where the three arguments must appear in the stated order.
 #' The role of this function is to represent terms in the definition of record additivity.
 #' Here `i` is an integer,
 #' while `xi` is an numeric vector and `sdp` is a numeric vector or matrix.

@@ -54,10 +54,10 @@
 #'     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
 #' }
 #' st_f <- function(xi, sdp, i) {
-#'     mean(xi)
+#'     xi
 #' }
 #' priv_f <- function(sdp, sx) {
-#'   sum(dnorm(sdp - sx, 0, 1/eps, TRUE))
+#'   sum(dnorm(sdp - sx/n, 0, 1/eps, TRUE))
 #' }
 #' dmod <- new_privacy(post_f = post_f,
 #'   latent_f = latent_f,
@@ -196,7 +196,9 @@ check_data_model <- function(x) {
     if(!checkmate::test_matrix(cmx)) {
         return("latent_f() function must return a matrix")
     }
-    stc <- data_model$st_f(cmx)
+    
+    print("hello")
+    stc <- data_model$st_f(cmx[1,], sdp, 1)
     t1 <- checkmate::test_numeric(sdp) & !checkmate::test_numeric(stc)
     t2 <- !checkmate::test_numeric(sdp) & checkmate::test_numeric(stc)
     t3 <- checkmate::test_matrix(sdp) & !checkmate::test_matrix(stc)
