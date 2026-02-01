@@ -15,15 +15,15 @@ test_that("check inputs", {
 
 test_that("basic sampler check", {
 
-    post_f <- function(dmat, theta) 1
-    latent_f <- function(theta) as.matrix(1)
-    st_f <- function(xi, sdp, i) 1
-    priv_f <- function(sdp, sx) 1
+    posterior_f <- function(dmat, theta) 1
+    latent_f    <- function(theta) as.matrix(1)
+    statistic_f <- function(xi, sdp, i) 1
+    mechanism_f <- function(sdp, sx) 1
 
-    dmod <- new_privacy(post_f = post_f,
-                        latent_f = latent_f,
-                        priv_f = priv_f,
-                        st_f = st_f,
+    dmod <- new_privacy(posterior_f = posterior_f,
+                        latent_f    = latent_f,
+                        mechanism_f = mechanism_f,
+                        statistic_f = statistic_f,
                         npar = 1)
 
     out <- dapper_sample(dmod,
@@ -37,17 +37,17 @@ test_that("basic sampler check", {
 
 test_that("return checks work", {
 
-    post_f <- function(dmat, theta) 1
-    latent_f <- function(theta) as.matrix(1)
-    st_f <- function(xi, sdp, i) 1
-    priv_f <- function(sdp, sx) 1
+    posterior_f <- function(dmat, theta) 1
+    latent_f    <- function(theta) as.matrix(1)
+    statistic_f <- function(xi, sdp, i) 1
+    mechanism_f <- function(sdp, sx) 1
 
     #check latent_f()
     latent_e <- function(theta) 1
-    dmod <- new_privacy(post_f = post_f,
-                        latent_f = latent_e,
-                        priv_f = priv_f,
-                        st_f = st_f,
+    dmod <- new_privacy(posterior_f = posterior_f,
+                        latent_f    = latent_e,
+                        mechanism_f = mechanism_f,
+                        statistic_f = statistic_f,
                         npar = 1)
 
     expect_error(dapper_sample(dmod,
@@ -55,12 +55,12 @@ test_that("return checks work", {
                          init_par = -2,
                          niter = 500))
 
-    #check post_f()
-    post_e <- function(dmat, theta) as.matrix(1)
-    dmod <- new_privacy(post_f = post_e,
-                        latent_f = latent_f,
-                        priv_f = priv_f,
-                        st_f = st_f,
+    #check posterior_f()
+    posterior_e <- function(dmat, theta) as.matrix(1)
+    dmod <- new_privacy(posterior_f = posterior_e,
+                        latent_f    = latent_f,
+                        mechanism_f = mechanism_f,
+                        statistic_f = statistic_f,
                         npar = 1)
 
     expect_error(dapper_sample(dmod,
@@ -68,28 +68,18 @@ test_that("return checks work", {
                                init_par = -2,
                                niter = 500))
 
-    #check sdp and st_f()
-    dmod <- new_privacy(post_f = post_f,
-                        latent_f = latent_f,
-                        priv_f = priv_f,
-                        st_f = st_f,
+    #check sdp and statistic_f()
+    dmod <- new_privacy(posterior_f = posterior_f,
+                        latent_f    = latent_f,
+                        mechanism_f = mechanism_f,
+                        statistic_f = statistic_f,
                         npar = 1)
+    
     expect_error(dapper_sample(dmod,
                                sdp = as.matrix(1),
                                init_par = -2,
                                niter = 500))
 
-    #check priv_f()
-    priv_e <- function(sdp, sx) as.matrix(1)
-    dmod <- new_privacy(post_f = post_e,
-                        latent_f = latent_f,
-                        priv_f = priv_e,
-                        st_f = st_f,
-                        npar = 1)
-    expect_error(dapper_sample(dmod,
-                               sdp = 1,
-                               init_par = -2,
-                               niter = 500))
 
 
 })

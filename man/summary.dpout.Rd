@@ -12,7 +12,11 @@
 \item{...}{optional arguments to \code{summarise_draws()}.}
 }
 \value{
-a summary table of MCMC statistics.
+A \code{\link[posterior:draws_summary]{draws_summary}} tibble containing
+summary statistics (such as \code{mean}, \code{sd}, \code{ess_bulk}, and \code{rhat}).
+
+See \code{\link[posterior:summarise_draws]{posterior::summarise_draws()}} for
+details on how these statistics are calculated.
 }
 \description{
 Summarise dpout object.

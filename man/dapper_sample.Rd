@@ -31,9 +31,13 @@ dapper_sample(
 }
 \value{
 A dpout object which contains:
-*\code{chain}: a \code{draw_matrix} object containing \code{niter - warmpup} draws from the private posterior.
-*\code{accept_prob}: a \code{(niter - warmup)} row matrix containing acceptance probabilities.
+\itemize{
+\item \code{chain}: a \code{\link[posterior:draws_matrix]{draws_matrix}} object containing \code{niter - warmup} draws from the private posterior.
+\item \code{mean_accept}: a \code{(niter - warmup)} row matrix containing the average acceptance rate over all latent records for each iteration.
 Each column corresponds to a parameter.
+\item \code{comp_accept}: a matrix containing \code{n} rows, where \code{n} is the number of latent records. Each row gives the mean acceptance rate
+over all iterations for an individual record.
+}
 }
 \description{
 Generates samples from the private posterior using a data augmentation framework.
@@ -54,7 +58,7 @@ eps <- 3
 y <- rnorm(n, mean = -2, sd = 1)
 sdp <- mean(y) + rnorm(1, 0, 1/eps)
 
-post_f <- function(dmat, theta) {
+posterior_f <- function(dmat, theta) {
     x <- c(dmat)
     xbar <- mean(x)
     n <- length(x)
@@ -67,16 +71,16 @@ post_f <- function(dmat, theta) {
 latent_f <- function(theta) {
     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
 }
-st_f <- function(xi, sdp, i) {
+statistic_f <- function(xi, sdp, i) {
     xi
 }
-priv_f <- function(sdp, sx) {
+mechanism_f <- function(sdp, sx) {
   sum(dnorm(sdp - sx/n, 0, 1/eps, TRUE))
 }
-dmod <- new_privacy(post_f = post_f,
+dmod <- new_privacy(posterior_f = posterior_f,
   latent_f = latent_f,
-  priv_f = priv_f,
-  st_f = st_f,
+  mechanism_f = mechanism_f,
+  statistic_f = statistic_f,
   npar = 1)
 
 out <- dapper_sample(dmod,

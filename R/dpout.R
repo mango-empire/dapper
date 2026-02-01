@@ -6,7 +6,7 @@
 #'
 #' @return a simulation object
 #' @noRd
-new_dpout <- function(theta, accept_mat, varnames = NULL) {
+new_dpout <- function(theta, mean_mat, comp_mat, varnames = NULL) {
   dp_obj <- do.call(rbind, theta)
   nr <- length(theta) * nrow(theta[[1]])
   nc <- ncol(theta[[1]])
@@ -18,8 +18,9 @@ new_dpout <- function(theta, accept_mat, varnames = NULL) {
   attr(dp_obj, 'nchains') <- length(theta)
   #structure(dp_obj, class = c("dpsim", "matrix"))
   e1 <- posterior::as_draws_matrix(dp_obj)
-  e2 <- accept_mat
-  structure(list(chain = e1, accept_prob = accept_mat), class = c("dpout"))
+  e2 <- mean_mat
+  e3 <- comp_mat
+  structure(list(chain = e1, mean_accept = e2, comp_accept = e3), class = c("dpout"))
 }
 
 

@@ -20,9 +20,14 @@
 #'
 #'
 #' @return A dpout object which contains:
-#' *`chain`: a `draw_matrix` object containing `niter - warmpup` draws from the private posterior.
-#' *`accept_prob`: a `(niter - warmup)` row matrix containing acceptance probabilities.
+#' * `chain`: a \code{\link[posterior:draws_matrix]{draws_matrix}} object containing `niter - warmup` draws from the private posterior.
+#' 
+#' * `mean_accept`: a `(niter - warmup)` row matrix containing the average acceptance rate over all latent records for each iteration.
 #' Each column corresponds to a parameter.
+#' 
+#' * `comp_accept`: a matrix containing `n` rows, where `n` is the number of latent records. Each row gives the mean acceptance rate
+#' over all iterations for an individual record.
+#' 
 #' @export
 #'
 #' @references
@@ -40,7 +45,7 @@
 #' y <- rnorm(n, mean = -2, sd = 1)
 #' sdp <- mean(y) + rnorm(1, 0, 1/eps)
 #'
-#' post_f <- function(dmat, theta) {
+#' posterior_f <- function(dmat, theta) {
 #'     x <- c(dmat)
 #'     xbar <- mean(x)
 #'     n <- length(x)
@@ -53,16 +58,16 @@
 #' latent_f <- function(theta) {
 #'     matrix(rnorm(100, mean = theta, sd = 1), ncol = 1)
 #' }
-#' st_f <- function(xi, sdp, i) {
+#' statistic_f <- function(xi, sdp, i) {
 #'     xi
 #' }
-#' priv_f <- function(sdp, sx) {
+#' mechanism_f <- function(sdp, sx) {
 #'   sum(dnorm(sdp - sx/n, 0, 1/eps, TRUE))
 #' }
-#' dmod <- new_privacy(post_f = post_f,
+#' dmod <- new_privacy(posterior_f = posterior_f,
 #'   latent_f = latent_f,
-#'   priv_f = priv_f,
-#'   st_f = st_f,
+#'   mechanism_f = mechanism_f,
+#'   statistic_f = statistic_f,
 #'   npar = 1)
 #'
 #' out <- dapper_sample(dmod,
@@ -116,8 +121,9 @@ dapper_sample <- function(data_model = NULL,
                               .options = furrr::furrr_options(seed = TRUE))
 
     theta_clist <- lapply(1:chains, function(s) fout[[s]]$sample)
-    accept_mat <- do.call(cbind, lapply(1:chains, function(s) fout[[s]]$accept_rate))
-    new_dpout(theta_clist, accept_mat, data_model$varnames)
+    mean_mat    <- do.call(cbind, lapply(1:chains, function(s) fout[[s]]$mean_accept))
+    comp_mat    <- do.call(cbind, lapply(1:chains, function(s) fout[[s]]$comp_accept))
+    new_dpout(theta_clist, mean_mat, comp_mat, data_model$varnames)
 }
 
 dapper_chain <- function(data_model,
@@ -139,19 +145,20 @@ dapper_chain <- function(data_model,
     assert_data_model <- checkmate::makeAssertionFunction(check_data_model)
     assert_data_model(list(data_model = data_model, init_par = init_par, sdp = sdp))
 
-    post_f    <- data_model$post_f
+    post_f    <- data_model$posterior_f
     latent_f  <- data_model$latent_f
-    priv_f    <- data_model$priv_f
-    st_f      <- data_model$st_f
+    mech_f    <- data_model$mechanism_f
+    stat_f    <- data_model$statistic_f
     npar      <- data_model$npar
 
-    accept_rate <- numeric(niter)
     theta_clist <- list()
     dmat        <- latent_f(init_par)
     theta_mat   <- matrix(0, nrow = niter, ncol = npar)
     theta       <- init_par
-    st          <- Reduce("+", lapply(1:nrow(dmat), function(i) st_f(dmat[i,], sdp, i)))
+    st          <- Reduce("+", lapply(1:nrow(dmat), function(i) stat_f(dmat[i,], sdp, i)))
     nobs        <- nrow(dmat)
+    mean_accept   <- numeric(niter)
+    comp_accept   <- numeric(nobs)
 
     for (i in 1:niter) {
       counter        <- 0
@@ -163,29 +170,36 @@ dapper_chain <- function(data_model,
         xo <- dmat[j, ]
         sn <- NULL
 
-        sn <- st - st_f(xo, sdp, j) + st_f(xs, sdp, j)
-        a <- priv_f(sdp, sn) - priv_f(sdp, st)
+        sn <- st - stat_f(xo, sdp, j) + stat_f(xs, sdp, j)
+        a <- mech_f(sdp, sn) - mech_f(sdp, st)
         if (log(stats::runif(1)) < a) {
-          counter    <- counter + 1
-          dmat[j, ]  <- xs
-          st         <- sn
+          if(i > warmup) {
+            comp_accept[j] <- comp_accept[j] + 1
+          }
+          counter      <- counter + 1
+          dmat[j, ]    <- xs
+          st           <- sn
         }
       }
-      accept_rate[i] <- counter / nobs
+      mean_accept[i] <- counter / nobs
       if (!is.null(prg_bar)) prg_bar(message = sprintf("Iteration %g", i))
     }
 
+    
     if (warmup > 0) {
       theta_mat <- theta_mat[-c(1:warmup), , drop = FALSE]
-      accept_rate <- accept_rate[-c(1:warmup)]
+      mean_accept <- mean_accept[-c(1:warmup)]
+      comp_accept <- comp_accept / (niter - warmup)
+    } else {
+      comp_accept <- comp_accept / niter
     }
-
-    list(sample = theta_mat, accept_rate = accept_rate)
+    
+    list(sample = theta_mat, mean_accept = mean_accept, comp_accept = comp_accept)
 }
 
 check_data_model <- function(x) {
     data_model <- x$data_model
-    init_par <- x$init_par
+    init_par   <- x$init_par
     sdp <- x$sdp
 
     if(length(init_par) != data_model$npar){
@@ -197,19 +211,16 @@ check_data_model <- function(x) {
         return("latent_f() function must return a matrix")
     }
     
-    stc <- data_model$st_f(cmx[1,], sdp, 1)
+    stc <- data_model$statistic_f(cmx[1,], sdp, 1)
     t1 <- checkmate::test_numeric(sdp) & !checkmate::test_numeric(stc)
     t2 <- !checkmate::test_numeric(sdp) & checkmate::test_numeric(stc)
     t3 <- checkmate::test_matrix(sdp) & !checkmate::test_matrix(stc)
     t4 <- !checkmate::test_matrix(sdp) & checkmate::test_matrix(stc)
     if(t1 | t2 | t3 | t4) {
-        return("st_f() must return the same data type as sdp")
+        return("statistic_f() must return the same data type as sdp")
     }
-    if(!checkmate::test_number(data_model$priv_f(sdp,cmx)) | !checkmate::test_scalar(data_model$priv_f(sdp,cmx))) {
-        return("priv_f() must return a scalar number")
-    }
-    if(!checkmate::test_class(data_model$post_f(cmx, init_par), "numeric")) {
-        return("post_f() must return a numeric vector")
+    if(!checkmate::test_class(data_model$posterior_f(cmx, init_par), "numeric")) {
+        return("posterior_f() must return a numeric vector")
     }
 
     TRUE
@@ -220,7 +231,11 @@ check_data_model <- function(x) {
 #' @param object dp_out object
 #' @param ... optional arguments to `summarise_draws()`.
 #'
-#' @return a summary table of MCMC statistics.
+#' @return A \code{\link[posterior:draws_summary]{draws_summary}} tibble containing 
+#' summary statistics (such as \code{mean}, \code{sd}, \code{ess_bulk}, and \code{rhat}).
+#' 
+#' See \code{\link[posterior:summarise_draws]{posterior::summarise_draws()}} for 
+#' details on how these statistics are calculated.
 #' @export
 summary.dpout <- function(object, ...) {
   posterior::summarise_draws(object$chain, ...)

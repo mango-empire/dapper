@@ -5,22 +5,22 @@
 \title{\code{privacy} Object Constructor.}
 \usage{
 new_privacy(
-  post_f = NULL,
+  posterior_f = NULL,
   latent_f = NULL,
-  priv_f = NULL,
-  st_f = NULL,
+  mechanism_f = NULL,
+  statistic_f = NULL,
   npar = NULL,
   varnames = NULL
 )
 }
 \arguments{
-\item{post_f}{a function that draws posterior samples given the confidential data.}
+\item{posterior_f}{a function that draws posterior samples given the confidential data.}
 
 \item{latent_f}{a function that represents the latent data sampling model.}
 
-\item{priv_f}{a function that represents the log likelihood of the privacy mechanism.}
+\item{mechanism_f}{a function that represents the log likelihood of the privacy mechanism.}
 
-\item{st_f}{a function that calculates the statistic to be released.}
+\item{statistic_f}{a function that calculates the statistic to be released.}
 
 \item{npar}{dimension of the parameter being estimated.}
 
@@ -34,18 +34,18 @@ Creates a \code{privacy} object to be used as input into dapper_sample().
 }
 \details{
 \itemize{
-\item post_f() is a function which makes draws from the posterior sampler. It has
-the syntax post_f(dmat, theta). Here \code{dmat} is a numeric matrix representing the confidential database
+\item posterior_f() is a function which makes draws from the posterior sampler. It has
+the syntax posterior_f(dmat, theta). Here \code{dmat} is a numeric matrix representing the confidential database
 and \code{theta} is a numeric vector which serves as the initialization point for a one sample draw.
-The easiest, bug-free way to construct post_f() is to use a conjugate prior. However,
+The easiest, bug-free way to construct posterior_f() is to use a conjugate prior. However,
 this function can also be constructed by wrapping a MCMC sampler generated from other R packages
 (e.g. \CRANpkg{rstan}, \CRANpkg{fmcmc}, \CRANpkg{adaptMCMC}).
-\item priv_f() is a function that represents the log of the privacy mechanism density.
-This function has the form priv_f(sdp, sx) where \code{sdp} and \code{sx} are both either
+\item mechanism_f() is a function that represents the log of the privacy mechanism density.
+This function has the form mechanism_f(sdp, sx) where \code{sdp} and \code{sx} are both either
 a numeric vector or matrix. The arguments must appear in the exact stated order with the same variables names as mentioned.
-Finally, the return value of priv_f() must be a numeric vector of length one.
-\item st_f() is a function which calculates a summary statistic. It
-has the syntax st_f(xi, sdp, i) where the three arguments must appear in the stated order.
+Finally, the return value of mechanism_f() must be a numeric vector of length one.
+\item statistic_f() is a function which calculates a summary statistic. It
+has the syntax statistic_f(xi, sdp, i) where the three arguments must appear in the stated order.
 The role of this function is to represent terms in the definition of record additivity.
 Here \code{i} is an integer,
 while \code{xi} is an numeric vector and \code{sdp} is a numeric vector or matrix.
