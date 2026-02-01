@@ -1,7 +1,5 @@
 # dapper 1.1.0
 
-# dapper 1.0.2
-
 * `dapper_sample()` now additionally returns the mean acceptance rate for each latent record.
 * updated naming scheme for `new_privacy`.
 * fixed minor typos and updates links in documentation.
