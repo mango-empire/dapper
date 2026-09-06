@@ -1,0 +1,337 @@
+---
+title: "Getting started with dapper: randomized response"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Getting started with dapper: randomized response}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 6,
+  fig.height = 3.5,
+  fig.align = "center"
+)
+```
+
+This vignette adapts Example 1 of *dapper: Data Augmentation for Private
+Posterior Estimation in R*, in which `dapper` is used to analyze a privatized
+record-level release produced by randomized response. The example uses a subset
+of the UC Berkeley admissions data aggregated across departments [@Bickel1975]
+to demonstrate privacy-aware inference for the odds ratio.
+
+## Prepare the data and privacy mechanism
+
+We start with the four confidential cell counts in `datasets::UCBAdmissions`,
+summed over departments. For computational convenience, we take a subsample of
+400 applicants.
+The first column encodes sex (male = 1, female = 0), and the second encodes
+admission status (admitted = 1, rejected = 0).
+
+```{r confidential-data}
+library(dapper)
+library(ggplot2)
+
+cells <- data.frame(
+  sex = c(1, 1, 0, 0),
+  status = c(1, 0, 1, 0)
+)
+counts <- c(1198, 1493, 557, 1278)
+cnf_df <- cells[rep(seq_len(nrow(cells)), times = counts), ]
+
+set.seed(1)
+n <- 400
+ix <- sample(seq_len(nrow(cnf_df)), n, replace = FALSE)
+cnf_df <- cnf_df[ix, ]
+```
+
+Randomized response [@Warner1965] is applied independently to both binary
+attributes. Each released value matches the
+confidential value with probability 3/4 and is flipped with probability 1/4. This
+can be done using, for example, two flips of a fair coin. Applying
+this mechanism to both attributes gives a privacy budget of at most
+$\epsilon = 2\log(3)$ for replacing one individual's pair of attributes.
+
+We store the release in `sdp`, a length-800 vector formed by stacking the sex
+column above the admission-status column.
+
+```{r randomized-release}
+ri <- as.logical(rbinom(2 * n, 1, 1/2))
+ra <- rbinom(sum(ri), 1, 1/2)
+
+sdp <- c(as.matrix(cnf_df))
+sdp[ri] <- ra
+prv_df <- data.frame(sex = sdp[seq_len(n)], status = sdp[n + seq_len(n)])
+```
+
+The following tables show the confidential and privatized counts. In an actual
+private-data analysis, the analyst would have access only to the privatized
+release and the known privacy mechanism.
+
+```{r admission-tables}
+admission_table <- function(x) {
+  table(
+    Sex = factor(x$sex, levels = c(0, 1), labels = c("Female", "Male")),
+    Status = factor(x$status, levels = c(1, 0),
+                    labels = c("Admitted", "Rejected"))
+  )
+}
+
+knitr::kable(admission_table(cnf_df), caption = "Confidential counts")
+knitr::kable(admission_table(prv_df), caption = "Privatized counts")
+```
+
+## Specify the four model components
+
+Let $\theta = (\pi_{11}, \pi_{10}, \pi_{01}, \pi_{00})$ contain the joint
+probabilities of the four sex/status combinations, in the order used by
+`cells`. We place a Dirichlet(1, 1, 1, 1) prior on these probabilities.
+
+`new_privacy()` requires four functions, with their argument names and order
+as shown below.
+
+### Generate latent data: `latent_f(theta)`
+
+Given the current probabilities, generate a proposed confidential dataset.
+Sampling from the four possible rows gives an $n \times 2$ matrix.
+
+```{r latent-component}
+latent_f <- function(theta) {
+  tl <- list(c(1, 1), c(1, 0), c(0, 1), c(0, 0))
+  rs <- sample(tl, n, replace = TRUE, prob = theta)
+  do.call(rbind, rs)
+}
+```
+
+### Update the parameters: `posterior_f(dmat, theta)`
+
+Conditional on the confidential data, the posterior is Dirichlet with
+parameters equal to the four cell counts plus one. Normalized gamma draws
+produce a draw from this posterior. The `theta` argument is required by
+the interface but is unused for this conjugate update.
+
+```{r posterior-component}
+posterior_f <- function(dmat, theta) {
+  sex <- dmat[, 1]
+  status <- dmat[, 2]
+  x <- c(
+    sum(sex & status),
+    sum(sex & !status),
+    sum(!sex & status),
+    sum(!sex & !status)
+  )
+  t1 <- rgamma(4, shape = x + 1, rate = 1)
+  t1 / sum(t1)
+}
+```
+
+### Summarize one record: `statistic_f(xi, sdp, i)`
+
+For row $i$, count the attributes that match their released values:
+
+$$
+t_i(x_i, s_{dp}) =
+\mathbb{1}(x_{i1} = s_{dp,i}) +
+\mathbb{1}(x_{i2} = s_{dp,n+i}).
+$$
+
+The sampler sums these contributions across rows. This allows it to update
+the total efficiently when proposing a change to one latent record.
+
+```{r statistic-component}
+statistic_f <- function(xi, sdp, i) {
+  n <- length(sdp) %/% 2
+  sum(xi == sdp[c(i, n + i)])
+}
+```
+
+### Evaluate the privacy likelihood: `mechanism_f(sdp, sx)`
+
+If `sx` is the total number of matching attributes, then `length(sdp) - sx`
+is the number that differ. The log likelihood of the randomized-response
+release is therefore
+
+$$
+\texttt{sx}\log(3/4) + (2n - \texttt{sx})\log(1/4).
+$$
+
+```{r mechanism-component}
+mechanism_f <- function(sdp, sx) {
+  sx * log(3/4) + (length(sdp) - sx) * log(1/4)
+}
+```
+
+## Run the sampler and inspect the output
+
+Combine the components with `new_privacy()`, then pass the model and release
+to `dapper_sample()`. As in the paper, we run four chains with 6,000 iterations
+each and discard the first 1,000 iterations per chain as warmup. This leaves
+20,000 draws in total. By default, the chains run
+sequentially.
+
+```{r sample-posterior}
+dmod <- new_privacy(
+  posterior_f = posterior_f,
+  latent_f = latent_f,
+  mechanism_f = mechanism_f,
+  statistic_f = statistic_f,
+  npar = 4,
+  varnames = c("pi_11", "pi_10", "pi_01", "pi_00")
+)
+
+dp_out <- dapper_sample(
+  dmod,
+  sdp = sdp,
+  seed = 123,
+  niter = 6000,
+  warmup = 1000,
+  chains = 4,
+  init_par = rep(0.25, 4)
+)
+```
+
+For parallel execution, see the example in `?dapper_sample`. Progress can be
+monitored by wrapping the sampling call in `progressr::with_progress()`.
+
+`summary()` reports posterior summaries and diagnostics using the
+**posterior** package. Inspect the R-hat values, effective sample sizes, and
+trace plots together before drawing conclusions. The iteration count here
+is chosen for a short demonstration. More iterations may be needed for precise
+estimates of tail probabilities or quantiles.
+
+```{r parameter-summary}
+summary(dp_out)
+```
+
+`plot()` produces trace plots through `bayesplot::mcmc_trace()`. Privacy noise
+can make the chains mix slowly, so checking these plots is particularly
+useful.
+
+```{r trace-plot, fig.height=4, fig.cap="Trace plots for the four cell probabilities. Colors distinguish the four chains.", fig.alt="Four panels show the sampled cell probabilities over iterations, with a different color for each chain."}
+plot(dp_out) +
+  scale_color_manual(values = c("#00468B", "#ED0000", "#42B540", "#925E9F")) +
+  theme_bw(base_size = 11)
+```
+
+## Estimate the odds ratio
+
+The odds ratio compares the odds of admission for males with those for
+females:
+
+$$
+\mathrm{OR} = \frac{\pi_{11}/\pi_{10}}{\pi_{01}/\pi_{00}}.
+$$
+
+Values above one indicate higher aggregate odds of admission for males.
+Because `dp_out$chain` is a **posterior** `draws_matrix`, we can create this
+derived quantity and summarize it directly.
+
+```{r odds-ratio}
+odds_ratio_draws <- posterior::mutate_variables(
+  dp_out$chain,
+  odds_ratio = (pi_11 * pi_00) / (pi_10 * pi_01)
+)
+odds_ratio_draws <- posterior::subset_draws(
+  odds_ratio_draws, variable = "odds_ratio"
+)
+posterior::summarise_draws(odds_ratio_draws)
+```
+
+The shaded region below marks the central 80% posterior interval, while the outer
+curve covers the central 95%. The dashed line marks an odds ratio of one.
+
+```{r odds-ratio-density, fig.height=2.8, fig.cap="Privacy-aware posterior distribution of the odds ratio, displayed from 0 to 10.", fig.alt="Posterior density of the odds ratio, with a shaded central 80 percent interval and a dashed vertical reference line at one."}
+bayesplot::mcmc_areas(
+  odds_ratio_draws,
+  prob = 0.8,
+  prob_outer = 0.95,
+  point_est = "none"
+) +
+  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.5) +
+  coord_cartesian(xlim = c(0, 10)) +
+  labs(x = "Odds ratio", y = NULL) +
+  theme_bw(base_size = 11) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+```
+
+## Compare with analyses that omit the privacy mechanism
+
+To examine the impact of the privacy mechanism, we can
+compare the posterior draws from dapper to an equivalent Bayesian
+analysis on the confidential data. Moreover, we can see the consequence
+of ignoring the privacy mechanism by repeating the analysis on the privatized records, 
+but treating them as if they were the confidential data.
+
+```{r comparison-draws}
+set.seed(1)
+confidential_data <- as.matrix(cnf_df)
+cps <- t(replicate(20000, posterior_f(confidential_data, NULL)))
+odds_ratio_conf <- (cps[, 1] * cps[, 4]) / (cps[, 2] * cps[, 3])
+
+set.seed(1)
+noisy_data <- matrix(sdp, ncol = 2)
+cps <- t(replicate(20000, posterior_f(noisy_data, NULL)))
+odds_ratio_noisy <- (cps[, 1] * cps[, 4]) / (cps[, 2] * cps[, 3])
+
+odds_ratio_private <- posterior::extract_variable(
+  odds_ratio_draws, "odds_ratio"
+)
+```
+
+The privacy-aware odds-ratio posterior has a long right tail, so we evaluate
+each density on a common plotting grid from 0 to 8, using all draws to
+estimate the density. 
+
+```{r comparison-densities}
+posterior_density <- function(draws, data, analysis) {
+  estimate <- density(draws, from = 0, to = 8)
+  data.frame(odds_ratio = estimate$x, density = estimate$y,
+             data = data, analysis = analysis)
+}
+
+comparison <- rbind(
+  posterior_density(odds_ratio_conf, "Confidential", "Privacy-aware"),
+  posterior_density(odds_ratio_private, "Privatized", "Privacy-aware"),
+  posterior_density(odds_ratio_conf, "Confidential", "Naïve"),
+  posterior_density(odds_ratio_noisy, "Privatized", "Naïve")
+)
+comparison$analysis <- factor(comparison$analysis,
+                              levels = c("Privacy-aware", "Naïve"))
+```
+
+Each panel uses the confidential-data posterior as a reference. The left
+compares it with the privacy-aware posterior from `dapper`; the right
+compares it with the naïve posterior that results from treating the privatized
+data as if they were confidential.
+
+```{r posterior-comparison, fig.cap="Odds-ratio posteriors for confidential data (blue) and privatized data (red). The left panel accounts for randomized response; the right panel ignores it.", fig.alt="Two density panels compare confidential and privatized analyses. The privacy-aware posterior is wider, while the naïve posterior is concentrated closer to one."}
+data_colors <- c(Confidential = "#00468B", Privatized = "#ED0000")
+
+ggplot(comparison, aes(x = odds_ratio, y = density, fill = data, color = data)) +
+  geom_area(position = "identity", alpha = 0.2, color = NA) +
+  geom_line(linewidth = 0.6) +
+  facet_wrap(~ analysis) +
+  coord_cartesian(xlim = c(0, 8)) +
+  scale_fill_manual(name = "Data", values = data_colors) +
+  scale_color_manual(name = "Data", values = data_colors) +
+  labs(x = "Odds ratio", y = "Density") +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "bottom")
+```
+
+The plots demonstrate that the naïve posterior exhibits some bias towards one and
+is overconfident. 
+On the other hand, the privacy-aware analysis accounts for the
+additional uncertainty introduced by randomized response and produces a
+wider posterior. This comparison illustrates why the privacy mechanism
+should be accounted for in a statistical analysis.
+
+## References

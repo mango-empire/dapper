@@ -6,7 +6,8 @@
 #'
 #' @param x a vector of quantiles.
 #' @param n number of random deviates.
-#' @param scale the scale parameter.
+#' @param scale the scale parameter. A positive number for `ddlaplace()` and
+#' a positive integer for `rdlaplace()`.
 #' @param log logical; if \code{TRUE}, probabilities are given as log(p).
 #'
 #' @details
@@ -27,7 +28,7 @@
 #'
 #' @references
 #' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
-#' \emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2004.00010}
+#' \emph{arXiv}. \doi{10.48550/ARXIV.2004.00010}
 #'
 #' @return
 #' * ddlaplace() returns a numeric vector representing the probability mass function of the
@@ -57,7 +58,7 @@ ddlaplace <- function(x, scale = 1, log = FALSE) {
 rdlaplace <- function(n, scale = 1) {
     #check inputs
     checkmate::assertCount(n)
-    checkmate::qassert(scale, "n1[0,)")
+    checkmate::assert_count(scale, positive = TRUE, tol = 0)
 
     t <- scale
     smp <- numeric(n)

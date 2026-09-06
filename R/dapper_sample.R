@@ -13,32 +13,32 @@
 #'
 #' @details
 #' Generates samples from the private posterior implied by `data_model`. The
-#' `data_model` input must by an object of class `privacy` which is created
+#' `data_model` input must be an object of class `privacy` which is created
 #' using the new_privacy() constructor. MCMC chains can be run in parallel
 #' using furrr::future_map(). See the \CRANpkg{furrr} package documentation for specifics.
 #' Long computations can be monitored with the \CRANpkg{progressr} package.
 #'
 #'
 #' @return A dpout object which contains:
-#' * `chain`: a \code{\link[posterior:draws_matrix]{draws_matrix}} object containing `niter - warmup` draws from the private posterior.
+#' * `chain`: a \code{\link[posterior:draws_matrix]{draws_matrix}} object containing `chains * (niter - warmup)` draws from the private posterior.
 #' 
 #' * `mean_accept`: a `(niter - warmup)` row matrix containing the average acceptance rate over all latent records for each iteration.
-#' Each column corresponds to a parameter.
+#' Each column corresponds to a chain.
 #' 
-#' * `comp_accept`: a matrix containing `n` rows, where `n` is the number of latent records. Each row gives the mean acceptance rate
-#' over all iterations for an individual record.
+#' * `comp_accept`: An `n`-by-`chains` matrix, where `n` is the number of latent records.
+#' Each entry is the mean acceptance rate for one record in one chain over the retained post-warmup iterations.
 #' 
 #' @export
 #'
 #' @references
 #' Ju, N., Awan, J. A., Gong, R., & Rao, V. A. (2022). Data Augmentation MCMC
-#' for Bayesian Inference from Privatized Data. \emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2206.00710}
+#' for Bayesian Inference from Privatized Data. \emph{arXiv}. \doi{10.48550/ARXIV.2206.00710}
 #'
 #' @seealso [new_privacy()]
 #'
 #' @examples
 #' #simulate confidential data
-#' #privacy mechanism adds gaussian noise to each observation.
+#' # The privacy mechanism adds Gaussian noise to the sample mean.
 #' set.seed(1)
 #' n <- 100
 #' eps <- 3
@@ -75,6 +75,7 @@
 #'                     init_par = -2,
 #'                     niter = 500)
 #' summary(out)
+#' plot(out)
 #'
 #' # for parallel computing we 'plan' a session
 #' # the code below uses 2 CPU cores for parallel computing

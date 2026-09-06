@@ -5,7 +5,8 @@
 #'
 #'
 #' @param posterior_f a function that draws posterior samples given the confidential data.
-#' @param latent_f a function that represents the latent data sampling model.
+#' @param latent_f A function with signature `latent_f(theta)` that
+#' generates a latent confidential dataset conditional on `theta`.
 #' @param mechanism_f a function that represents the log likelihood of the privacy mechanism.
 #' @param statistic_f a function that calculates the statistic to be released.
 #' @param npar dimension of the parameter being estimated.
@@ -19,16 +20,29 @@
 #' this function can also be constructed by wrapping a MCMC sampler generated from other R packages
 #' (e.g. \CRANpkg{rstan}, \CRANpkg{fmcmc}, \CRANpkg{adaptMCMC}).
 #'
+#' * `latent_f(theta)` must take exactly one argument named `theta`,
+#' a numeric vector of length `npar`. It must return a matrix with
+#' one confidential record per row and one data variable per column.
+#' The records (rows) must be independent and identically distributed
+#' conditional on `theta`. Variables within a record may be dependent.
+#' The returned matrix must have the same dimensions on every call.
+#' For univariate data, return a one-column matrix.
+#'
 #' * mechanism_f() is a function that represents the log of the privacy mechanism density.
 #' This function has the form mechanism_f(sdp, sx) where `sdp` and `sx` are both either
 #' a numeric vector or matrix. The arguments must appear in the exact stated order with the same variables names as mentioned.
 #' Finally, the return value of mechanism_f() must be a numeric vector of length one.
 #'
-#' * statistic_f() is a function which calculates a summary statistic. It
-#' has the syntax statistic_f(xi, sdp, i) where the three arguments must appear in the stated order.
-#' The role of this function is to represent terms in the definition of record additivity.
-#' Here `i` is an integer,
-#' while `xi` is an numeric vector and `sdp` is a numeric vector or matrix.
+#' * `statistic_f(xi, sdp, i)` computes one record's contribution to the
+#'   statistic used by the privacy mechanism. `xi` is row `i` of the latent
+#'   confidential dataset, supplied as a vector. `sdp` is the observed
+#'   privatized release, and `i` is the row index. Argument names and order
+#'   must match this signature.
+#'
+#'   The sampler sums these contributions over all records and passes the
+#'   result as `sx` to `mechanism_f(sdp, sx)`. Return a numeric vector when
+#'   `sdp` is a numeric vector, or a matrix when `sdp` is a matrix.
+#'   Contributions must have consistent lengths or dimensions across records.
 #'
 #' * `npar` is an integer equal to the dimension of `theta`.
 #' @md

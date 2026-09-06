@@ -12,7 +12,8 @@ rdlaplace(n, scale = 1)
 \arguments{
 \item{x}{a vector of quantiles.}
 
-\item{scale}{the scale parameter.}
+\item{scale}{the scale parameter. A positive number for \code{ddlaplace()} and
+a positive integer for \code{rdlaplace()}.}
 
 \item{log}{logical; if \code{TRUE}, probabilities are given as log(p).}
 
@@ -48,5 +49,5 @@ rdlaplace(10)
 }
 \references{
 Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
-\emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2004.00010}
+\emph{arXiv}. \doi{10.48550/ARXIV.2004.00010}
 }

@@ -32,11 +32,11 @@ dapper_sample(
 \value{
 A dpout object which contains:
 \itemize{
-\item \code{chain}: a \code{\link[posterior:draws_matrix]{draws_matrix}} object containing \code{niter - warmup} draws from the private posterior.
+\item \code{chain}: a \code{\link[posterior:draws_matrix]{draws_matrix}} object containing \code{chains * (niter - warmup)} draws from the private posterior.
 \item \code{mean_accept}: a \code{(niter - warmup)} row matrix containing the average acceptance rate over all latent records for each iteration.
-Each column corresponds to a parameter.
-\item \code{comp_accept}: a matrix containing \code{n} rows, where \code{n} is the number of latent records. Each row gives the mean acceptance rate
-over all iterations for an individual record.
+Each column corresponds to a chain.
+\item \code{comp_accept}: An \code{n}-by-\code{chains} matrix, where \code{n} is the number of latent records.
+Each entry is the mean acceptance rate for one record in one chain over the retained post-warmup iterations.
 }
 }
 \description{
@@ -44,14 +44,14 @@ Generates samples from the private posterior using a data augmentation framework
 }
 \details{
 Generates samples from the private posterior implied by \code{data_model}. The
-\code{data_model} input must by an object of class \code{privacy} which is created
+\code{data_model} input must be an object of class \code{privacy} which is created
 using the new_privacy() constructor. MCMC chains can be run in parallel
 using furrr::future_map(). See the \CRANpkg{furrr} package documentation for specifics.
 Long computations can be monitored with the \CRANpkg{progressr} package.
 }
 \examples{
 #simulate confidential data
-#privacy mechanism adds gaussian noise to each observation.
+# The privacy mechanism adds Gaussian noise to the sample mean.
 set.seed(1)
 n <- 100
 eps <- 3
@@ -88,6 +88,7 @@ out <- dapper_sample(dmod,
                     init_par = -2,
                     niter = 500)
 summary(out)
+plot(out)
 
 # for parallel computing we 'plan' a session
 # the code below uses 2 CPU cores for parallel computing
@@ -104,7 +105,7 @@ plan(sequential)
 }
 \references{
 Ju, N., Awan, J. A., Gong, R., & Rao, V. A. (2022). Data Augmentation MCMC
-for Bayesian Inference from Privatized Data. \emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2206.00710}
+for Bayesian Inference from Privatized Data. \emph{arXiv}. \doi{10.48550/ARXIV.2206.00710}
 }
 \seealso{
 \code{\link[=new_privacy]{new_privacy()}}

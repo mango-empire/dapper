@@ -7,7 +7,7 @@
 #'
 #' @param x vector of quantiles.
 #' @param n number of random deviates.
-#' @param mu location parameter.
+#' @param mu location parameter. Must be an integer for both `ddnorm()` and `rdnorm()`.
 #' @param sigma scale parameter.
 #' @param log logical; if \code{TRUE}, log unnormalized probabilities are returned.
 #'
@@ -15,7 +15,7 @@
 #'
 #' Probability mass function
 #' \deqn{
-#' P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(x-\mu)^2/2\sigma^2}}.
+#' P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(y-\mu)^2/2\sigma^2}}.
 #' }
 #'
 #' @examples
@@ -30,7 +30,7 @@
 #'
 #' @references
 #' Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
-#' \emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2004.00010}
+#' \emph{arXiv}. \doi{10.48550/ARXIV.2004.00010}
 #'
 #' @return
 #' * ddnorm() returns a numeric vector representing the probability mass function of the
@@ -42,7 +42,7 @@
 ddnorm <- function(x, mu = 0, sigma = 1, log = FALSE) {
     #check inputs
     checkmate::assert_numeric(x)
-    checkmate::assert_scalar(mu)
+    checkmate::assert_int(mu, tol = 0)
     checkmate::qassert(sigma, "n1[0,)")
     checkmate::qassert(log, "b1")
 
@@ -92,7 +92,7 @@ ddnorm_constant <- memoise(function(sigma) {
 rdnorm <- function(n, mu = 0, sigma = 1) {
     #check inputs
     checkmate::assertCount(n)
-    checkmate::assertScalar(mu)
+    checkmate::assert_int(mu, tol = 0)
     checkmate::qassert(sigma, "n1[0,)")
 
     t <- floor(sigma) + 1

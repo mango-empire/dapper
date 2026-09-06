@@ -12,7 +12,7 @@ rdnorm(n, mu = 0, sigma = 1)
 \arguments{
 \item{x}{vector of quantiles.}
 
-\item{mu}{location parameter.}
+\item{mu}{location parameter. Must be an integer for both \code{ddnorm()} and \code{rdnorm()}.}
 
 \item{sigma}{scale parameter.}
 
@@ -34,7 +34,7 @@ discrete Gaussian distribution with mean \code{mu} and scale parameter \code{sig
 \details{
 Probability mass function
 \deqn{
-P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(x-\mu)^2/2\sigma^2}}.
+P[X = x] = \dfrac{e^{-(x - \mu)^2/2\sigma^2}}{\sum_{y \in \mathbb{Z}} e^{-(y-\mu)^2/2\sigma^2}}.
 }
 }
 \examples{
@@ -50,5 +50,5 @@ rdnorm(10)
 }
 \references{
 Canonne, C. L., Kamath, G., & Steinke, T. (2020). The Discrete Gaussian for Differential Privacy.
-\emph{arXiv}. \doi{https://doi.org/10.48550/ARXIV.2004.00010}
+\emph{arXiv}. \doi{10.48550/ARXIV.2004.00010}
 }

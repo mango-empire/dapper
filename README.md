@@ -6,8 +6,18 @@
 A data augmentation framework for privacy aware Bayesian inference.
 
 ## Installation
-Under construction. Latest release can be installed using the following: 
+Install the development version, including its vignette, with:
 
 ``` r
-devtools::install_github("mango-empire/dapper")
+devtools::install_github("mango-empire/dapper", build_vignettes = TRUE)
+```
+
+## Example workflow
+
+The randomized-response vignette walks through model construction, posterior
+sampling, diagnostics, and a comparison with an analysis that ignores privacy
+noise. After installation, open it with:
+
+``` r
+vignette("randomized-response", package = "dapper")
 ```
